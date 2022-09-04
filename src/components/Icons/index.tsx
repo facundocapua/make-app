@@ -1,0 +1,7 @@
+export { default as AddIcon } from './AddIcon'
+export { default as ClockIcon } from './ClockIcon'
+export { default as CloseIcon } from './CloseIcon'
+export { default as ExitIcon } from './ExitIcon'
+export { default as HomeIcon } from './HomeIcon'
+export { default as InfoIcon } from './InfoIcon'
+export { default as UserIcon } from './UserIcon'
