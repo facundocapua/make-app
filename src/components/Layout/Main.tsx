@@ -11,7 +11,7 @@ type MainProps = {
 export default function Main ({ children }: MainProps) {
   const { data: session } = useSession()
   return (
-    <div className='grid content-center justify-center w-full h-screen bg-gray-300'>
+    <div className='grid content-center justify-center w-full h-full bg-gray-300'>
       <div className='w-screen max-w-md bg-rose-50 aspect-[9/19.5] flex flex-col relative'>
         <AlertContainer />
         <header className='flex items-center justify-center w-full py-4'>
