@@ -1,47 +1,57 @@
-import { useSession } from 'next-auth/react'
-import useEventCollection from '@/hooks/useEventCollection'
 import EventItem from './EventItem'
-import TimelineContainer from '../Timeline/TimelineContainer'
-import TimelineItem from '../Timeline/TimelineItem'
-import type { EventItemType } from '@/services/google'
 
-const formatDate = (date:string): string => {
-  const dateObj = new Date(date)
-  const options = {
-    day: 'numeric',
-    month: 'long'
-  }
+import {
+  SwipeableList,
+  SwipeableListItem,
+  SwipeAction,
+  TrailingActions,
+  Type
+} from 'react-swipeable-list'
+import 'react-swipeable-list/dist/styles.css'
+import { EventType } from '@/types/event'
+import DeleteIcon from '../Icons/DeleteIcon'
 
-  return dateObj.toLocaleDateString('es-AR', options)
+type TrailingActionsProps = {
+  id: EventType['id']
 }
 
-export default function EventList () {
-  const { data: session } = useSession()
+type Props = {
+  events: Array<EventType>,
+  onItemClick: (event: EventType) => void
+  onItemDelete: (id: EventType['id']) => void
+}
 
-  if (!session) {
-    return <>You need to login</>
-  }
+export default function EventList ({ events, onItemClick, onItemDelete }: Props) {
+  const trailingActions = ({ id }: TrailingActionsProps) => (
+    <TrailingActions>
+      <SwipeAction
+        destructive={true}
+        onClick={() => onItemDelete(id)}
+      >
+        <button className='flex items-center justify-center w-12 pr-3 mt-2 text-center text-white bg-red-500 rounded-lg'>
+          <DeleteIcon className='items-center w-8 h-8' />
+        </button>
+      </SwipeAction>
+    </TrailingActions>
+  )
 
-  const { data, loading } = useEventCollection()
-
-  if (loading || !data) {
-    return <>Loading...</>
+  if (!events || !events.length) {
+    return <p className='text-center'>No hay eventos</p>
   }
 
   return (
-    <section className='mx-4'>
-      { data.map(({ date, events }: {date: string, events: Array<EventItemType>}) => (
-        <div key={date} className='mb-4'>
-          <h2 className='text-xl font-bold'>{formatDate(date)}</h2>
-          <ol>
-            {events.map((event: EventItemType) => (
-              <li key={event.id}>
-                <EventItem event={event} />
-              </li>
-            ))}
-          </ol>
-        </div>
-      ))}
-    </section>
+    <>
+      <SwipeableList fullSwipe={true} type={Type.IOS}>
+        {events.map((event: EventType) => (
+          <SwipeableListItem
+            key={event.id}
+            onClick={() => onItemClick(event)}
+            trailingActions={trailingActions({ id: event.id })}
+          >
+            <EventItem event={event} />
+          </SwipeableListItem>
+        ))}
+      </SwipeableList>
+    </>
   )
 }

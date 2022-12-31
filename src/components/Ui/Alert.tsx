@@ -34,7 +34,7 @@ export default function Alert ({ type, message, onClose, timeout = 3000 }: Alert
         {message}
       </div>
       <button onClick={onClose}
-       type="button" className={`ml-auto -mx-1.5 -my-1.5rounded-lg focus:ring-2 inline-flex h-5 w-5 bg-${color}-100 text-${color}-500 focus:ring-${color}-400 hover:bg-${color}-200`} aria-label="Close">
+        type="button" className={`ml-auto -mx-1.5 -my-1.5rounded-lg focus:ring-2 inline-flex h-5 w-5 bg-${color}-100 text-${color}-500 focus:ring-${color}-400 hover:bg-${color}-200`} aria-label="Close">
         <span className="sr-only">Close</span>
         <CloseIcon className='w-5 h-5' />
       </button>

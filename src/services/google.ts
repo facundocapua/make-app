@@ -1,3 +1,5 @@
+import type { EventType } from '@/types/event'
+import type { GoogleEventType } from './google/types'
 export const CALENDAR_NAME: string = 'MakeApp Calendar'
 export const CALENDAR_DEFAULT_TIMEZONE: string = 'America/Argentina/Buenos_Aires'
 
@@ -68,54 +70,25 @@ export const getCalendar = ({ name, accessToken }: GetCalendarProps):Promise<Cal
     })
 }
 
-export type EventItemType = {
-  id: string,
-  status: string,
-  htmlLink: string,
-  summary: string,
-  description: string,
-  start: {
-    dateTime: string,
-    timeZone: string
-  },
-  end: {
-    dateTime: string,
-    timeZone: string
-  }
-}
-
-type CreateEventProps = {
-  calendarId: string,
-  event: any,
-  accessToken: string
-}
-
-export const createEvent = ({ calendarId, event, accessToken }: CreateEventProps):Promise<EventItemType> => {
-  return makeApiCall({
-    url: `/calendar/v3/calendars/${calendarId}/events`,
-    accessToken,
-    method: 'POST',
-    data: event
-  })
-    .then(res => res.json())
-    .then(res => {
-      console.log(res)
-      return res
-    })
-}
-
 type GetEventsProps = {
   calendarId: string,
   accessToken: string,
 }
-export const listEvents = ({ calendarId, accessToken }: GetEventsProps):Promise<Array<EventItemType>> => {
+
+export const listEvents = ({ calendarId, accessToken }: GetEventsProps):Promise<Array<EventType>> => {
   return makeApiCall({
     url: `/calendar/v3/calendars/${calendarId}/events?orderBy=startTime&singleEvents=true`,
     accessToken
   })
     .then(res => res.json())
     .then(res => {
-      console.log(res)
-      return res.items
+      return res.items.map((item: GoogleEventType): EventType => {
+        const { id, description } = item
+        const data = JSON.parse(description)
+        return {
+          id,
+          ...data
+        }
+      })
     })
 }

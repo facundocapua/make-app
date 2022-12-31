@@ -1,9 +1,9 @@
 import type { NextPage } from 'next'
-import NewEvent from 'components/Form/NewEvent'
+import CreateEventForm from '@/components/Form/CreateEventForm'
 const Create: NextPage = () => {
   return (
     <>
-      <NewEvent />
+      <CreateEventForm />
     </>
   )
 }

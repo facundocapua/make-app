@@ -1,28 +1,20 @@
-import { EventItem as EventItemType } from '@/services/google'
 import { ClockIcon } from '@/components/Icons'
+import { EventType } from '@/types/event'
+import { formatTime } from '@/utils/date'
 
-const formatTime = (date:string): string => {
-  const dateObj = new Date(date)
-  const options = {
-    hour: '2-digit',
-    minute: '2-digit'
-  }
-  return dateObj.toLocaleString('es-AR', options)
-}
-
-export default function EventItem ({ event }: { event: EventItemType }) {
-  const { summary, description, start, end } = event
-  const data = JSON.parse(description)
+export default function EventItem ({ event }: { event: EventType }) {
+  const { fullName, date } = event
+  const isOld = new Date(date) < new Date()
 
   return (
-    <article className="flex gap-2 mt-2 items-center">
-      <div className='text-lg flex gap-1 items-center'>
+    <article className={`flex items-stretch mt-2 bg-red-100 rounded-lg cursor-pointer drop-shadow-xs shadow-red-200 grow ${isOld ? 'opacity-40' : ''}`}>
+      <div className='flex items-center gap-1 px-4 text-lg bg-red-200 rounded-l-lg'>
         <ClockIcon className='w-3 h-3' />
-        <small>{formatTime(start.dateTime)}</small>
+        <small>{formatTime(date)}</small>
       </div>
 
-      <div className='bg-red-100 p-2 rounded-lg drop-shadow-xs shadow-red-200 grow'>
-        <h3>{summary}</h3>
+      <div className='p-2'>
+        <h3>{fullName}</h3>
       </div>
     </article>
   )

@@ -1,4 +1,4 @@
-import { CalendarItem, getCalendar } from '@/services/google'
+import { CalendarType, getCalendar } from '@/services/google'
 import { useState, useEffect } from 'react'
 
 type CalendarProps = {
@@ -7,12 +7,12 @@ type CalendarProps = {
 }
 
 type CalendarResponse = {
-  calendar: CalendarItem | undefined,
+  calendar: CalendarType | undefined,
   loading: boolean
 }
 
 export default function useCalendar ({ name = '', accessToken = '' }: CalendarProps): CalendarResponse {
-  const [calendar, setCalendar] = useState <CalendarItem | undefined>()
+  const [calendar, setCalendar] = useState <CalendarType | undefined>()
   const [loading, setLoading] = useState <boolean>(false)
 
   useEffect(() => {

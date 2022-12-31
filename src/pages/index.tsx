@@ -1,10 +1,10 @@
-import EventList from '@/components/Events/EventList'
+import GroupedEventList from '@/components/Events/GroupedEventList'
 import type { NextPage } from 'next'
 
 const Home: NextPage = () => {
   return (
     <>
-      <EventList />
+      <GroupedEventList />
     </>
   )
 }

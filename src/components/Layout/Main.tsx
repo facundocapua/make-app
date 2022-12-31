@@ -11,20 +11,20 @@ type MainProps = {
 export default function Main ({ children }: MainProps) {
   const { data: session } = useSession()
   return (
-    <div className='w-full h-screen grid content-center justify-center bg-gray-100'>
-      <div className='w-screen bg-rose-50 max-w-sm aspect-[9/19.5] rounded-lg flex flex-col relative'>
+    <div className='grid content-center justify-center w-full h-screen bg-gray-300'>
+      <div className='w-screen max-w-md bg-rose-50 aspect-[9/19.5] flex flex-col relative'>
         <AlertContainer />
-        <header className='w-full flex justify-center mt-2'>
-          <h1 className='text-2xl mb-4'>MakeApp</h1>
+        <header className='flex items-center justify-center w-full py-4'>
+          <h1 className='text-2xl'>MakeApp</h1>
         </header>
-        <main className='grow'>
+        <main className='min-h-0 overflow-y-auto grow shrink basis-0'>
           { session
             ? (
               <>{children}</>
-              )
+            )
             : (
               <Login />
-              )
+            )
           }
         </main>
         <footer>

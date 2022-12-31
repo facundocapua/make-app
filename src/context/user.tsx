@@ -28,7 +28,7 @@ const UserProvider: React.FC<UserProviderProps> = ({ calendarName, children }) =
 
   useEffect(() => {
     const error = session?.error as string
-    if (error == 'RefreshAccessTokenError') {
+    if (error === 'RefreshAccessTokenError') {
       signOut()
     }
   }, [session?.error])

@@ -4,19 +4,15 @@ import { HomeIcon, AddIcon, ExitIcon } from '@/components/Icons'
 
 export default function MainMenu () {
   return (
-    <nav className='flex justify-center items-center gap-10 pb-4'>
+    <nav className='flex items-center justify-center gap-10 py-4'>
       <Link href="/">
-        <a>
-          <HomeIcon className='h-8 w-8 transition-transform text-rose-500 hover:scale-125' />
-        </a>
+        <HomeIcon className='w-8 h-8 transition-transform text-rose-500 hover:scale-125' />
       </Link>
       <Link href="/create">
-        <a>
-          <AddIcon className='h-12 w-12 transition-transform bg-rose-500 rounded-full text-white hover:scale-125' />
-        </a>
+        <AddIcon className='w-12 h-12 text-white transition-transform rounded-full bg-rose-500 hover:scale-125' />
       </Link>
       <button aria-label='Sign Out' title='Sign Out' onClick={() => signOut()}>
-        <ExitIcon className='h-8 w-8  transition-transform text-rose-500 hover:scale-125' />
+        <ExitIcon className='w-8 h-8 transition-transform text-rose-500 hover:scale-125' />
       </button>
     </nav>
   )
