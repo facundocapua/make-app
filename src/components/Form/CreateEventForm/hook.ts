@@ -58,7 +58,7 @@ type UseFormResponse = Omit<EventType, 'id'> & {
 export default function useForm (): UseFormResponse {
   const [state, dispatch] = useReducer(reducer, {
     fullName: '',
-    date: '',
+    date: new Date().toISOString(),
     includesTest: false,
     testDate: '',
     duration: 60,

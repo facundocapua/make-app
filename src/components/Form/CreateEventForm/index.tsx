@@ -1,11 +1,11 @@
 import React, { useContext } from 'react'
-import { Toggle, Text } from '@/components/Form/Elements'
+import { Toggle, Text, DateField, Select } from '@/components/Form/Elements'
 import { AlertsContext, AlertsContextType } from '@/context/alerts'
 import { AlertType } from '@/types/alerts'
 import { useRouter } from 'next/router'
 import useForm from './hook'
 import { saveEvent } from '@/services/api/saveEvent'
-import Slider from '../Elements/Slider'
+import { durationOptions } from '@/utils/datetime'
 
 export default function CreateEventForm () {
   const { addAlert } = useContext(AlertsContext) as AlertsContextType
@@ -15,13 +15,11 @@ export default function CreateEventForm () {
     updateFullname,
     updateDate,
     updateDuration,
-    updateIncludesTest,
-    updateTestDate,
     updateDeposit,
     updatePrice,
     ...state
   } = useForm()
-  const { fullName, date, includesTest, testDate, deposit, price, duration } = state
+  const { fullName, date, deposit, price, duration } = state
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -44,16 +42,11 @@ export default function CreateEventForm () {
         onChange={updateFullname}
       />
 
-      <Text
-        label="Fecha"
-        value={date}
-        onChange={updateDate}
-        type='datetime-local'
-      />
+      <DateField label='Fecha' value={date} onChange={updateDate} />
 
-      <Slider label="Duración (minutos)" value={duration} min={30} max={120} step={15} onChange={updateDuration} />
+      <Select label='Duración (minutos)' value={String(duration)} options={durationOptions} onChange={updateDuration} />
 
-      <Toggle label="¿Incluye prueba?" checked={includesTest} onChange={updateIncludesTest} />
+      {/* <Toggle label="¿Incluye prueba?" checked={includesTest} onChange={updateIncludesTest} />
 
       {includesTest && (
         <Text
@@ -62,7 +55,7 @@ export default function CreateEventForm () {
           onChange={updateTestDate}
           type='datetime-local'
         />
-      )}
+      )} */}
 
       <Text
         label="Precio"
