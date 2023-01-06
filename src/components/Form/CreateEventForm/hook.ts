@@ -17,25 +17,25 @@ type ActionType<T> = {
 }
 
 const ACTIONS = {
-  [ACTIONS_TYPES.UPDATE_FULL_NAME]: (state: Omit<EventType, 'id'>, action: ActionType<string>): Omit<EventType, 'id'> => {
+  [ACTIONS_TYPES.UPDATE_FULL_NAME]: (state: Omit<EventType, 'id'>, action: ActionType<EventType['id']>): Omit<EventType, 'id'> => {
     return { ...state, fullName: action.payload }
   },
-  [ACTIONS_TYPES.UPDATE_DATE]: (state: Omit<EventType, 'id'>, action: ActionType<string>): Omit<EventType, 'id'> => {
+  [ACTIONS_TYPES.UPDATE_DATE]: (state: Omit<EventType, 'id'>, action: ActionType<EventType['date']>): Omit<EventType, 'id'> => {
     return { ...state, date: action.payload }
   },
-  [ACTIONS_TYPES.UPDATE_DURATION]: (state: Omit<EventType, 'id'>, action: ActionType<number>): Omit<EventType, 'id'> => {
+  [ACTIONS_TYPES.UPDATE_DURATION]: (state: Omit<EventType, 'id'>, action: ActionType<EventType['duration']>): Omit<EventType, 'id'> => {
     return { ...state, duration: action.payload }
   },
-  [ACTIONS_TYPES.UPDATE_INCLUDES_TEST]: (state: Omit<EventType, 'id'>, action: ActionType<boolean>): Omit<EventType, 'id'> => {
+  [ACTIONS_TYPES.UPDATE_INCLUDES_TEST]: (state: Omit<EventType, 'id'>, action: ActionType<EventType['includesTest']>): Omit<EventType, 'id'> => {
     return { ...state, includesTest: action.payload }
   },
-  [ACTIONS_TYPES.UPDATE_TEST_DATE]: (state: Omit<EventType, 'id'>, action: ActionType<string>): Omit<EventType, 'id'> => {
+  [ACTIONS_TYPES.UPDATE_TEST_DATE]: (state: Omit<EventType, 'id'>, action: ActionType<EventType['testDate']>): Omit<EventType, 'id'> => {
     return { ...state, testDate: action.payload }
   },
-  [ACTIONS_TYPES.UPDATE_PRICE]: (state: Omit<EventType, 'id'>, action: ActionType<number>): Omit<EventType, 'id'> => {
+  [ACTIONS_TYPES.UPDATE_PRICE]: (state: Omit<EventType, 'id'>, action: ActionType<EventType['price']>): Omit<EventType, 'id'> => {
     return { ...state, price: action.payload }
   },
-  [ACTIONS_TYPES.UPDATE_DEPOSIT]: (state: Omit<EventType, 'id'>, action: ActionType<number>): Omit<EventType, 'id'> => {
+  [ACTIONS_TYPES.UPDATE_DEPOSIT]: (state: Omit<EventType, 'id'>, action: ActionType<EventType['deposit']>): Omit<EventType, 'id'> => {
     return { ...state, deposit: action.payload }
   }
 }
