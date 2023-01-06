@@ -1,3 +1,28 @@
+export const formatDisplayName = (name: string): string => {
+  if (String(name) === '') return 'Anónimo'
+
+  return name
+}
+
+export const formatPrice = (price: number) => {
+  const options = {
+    style: 'currency',
+    currency: 'ARS',
+    minimumFractionDigits: 0
+  }
+
+  return price.toLocaleString('es-AR', options)
+}
+
+export const formatDateComputer = (date: string) => {
+  const dateObj = new Date(date)
+  const year = dateObj.getFullYear()
+  const month = String(dateObj.getMonth() + 1).padStart(2, '0')
+  const day = String(dateObj.getDate()).padStart(2, '0')
+
+  return [year, month, day].join('-')
+}
+
 export const formatDate = (date: string) => {
   const dateObj = new Date(date)
   const options: Intl.DateTimeFormatOptions = {
