@@ -1,5 +1,4 @@
 import { EventType } from '@/types/event'
-import { formatDateTime } from '@/utils/format'
 import { CloseIcon } from '../Icons'
 import DisplayNameInfo from './Fields/DisplayName'
 import EventTimeInfo from './EventTimeInfo'

@@ -6,7 +6,7 @@ type Props = {
   onDateChange: (date: string) => void
 }
 
-export default function EventTimeInfo ({ date, duration, onDateChange } : Props) {
+export default function EventTimeInfo ({ date, onDateChange } : Props) {
   return (
     <div className='flex items-center'>
       ¿Cuándo?
