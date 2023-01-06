@@ -4,7 +4,7 @@ export type EventType = {
   date: string,
   price: number,
   deposit: number,
-  duration: number,
+  duration: 30 | 45 | 60 | 90 | 120,
   includesTest: boolean,
   testDate?: string,
 }
