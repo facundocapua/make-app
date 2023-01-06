@@ -44,7 +44,7 @@ export default function CreateEventForm () {
 
       <DateField label='Fecha' value={date} onChange={updateDate} />
 
-      <Select label='Duración (minutos)' value={String(duration)} options={durationOptions} onChange={updateDuration} />
+      <Select label='Duración (minutos)' value={String(duration)} options={durationOptions} onChange={(value) => updateDuration(Number(value))} />
 
       {/* <Toggle label="¿Incluye prueba?" checked={includesTest} onChange={updateIncludesTest} />
 

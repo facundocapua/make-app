@@ -6,7 +6,8 @@ export enum AlertType{
 }
 
 export type AlertItemType = {
-  id: string,
-  type: AlertType,
-  message: string,
+  id: string
+  type: AlertType
+  message: string
+  timeoutToDisappear?: ReturnType<typeof setTimeout>
 }

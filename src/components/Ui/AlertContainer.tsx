@@ -9,7 +9,7 @@ export default function AlertContainer () {
   if (!alerts.length) return null
 
   return (
-    <div className='fixed w-full max-w-sm flex flex-col justify-center items-center'>
+    <div className='fixed flex flex-col items-center justify-center w-full'>
       {alerts.map(alert => (
         <Alert
           key={alert.id}

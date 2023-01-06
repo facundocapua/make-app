@@ -1,9 +1,11 @@
 import { AlertItemType, AlertType } from '@/types/alerts'
-import * as React from 'react'
+import { createContext, ReactNode, useRef, useState, FC } from 'react'
+
+const DURATION = 3000
 
 export type AddAlertProps = {
   type: AlertType,
-  message: string,
+  message: string
 }
 
 export type AlertsContextType = {
@@ -12,25 +14,37 @@ export type AlertsContextType = {
   removeAlert: (id: string) => void,
 }
 
-export const AlertsContext = React.createContext<AlertsContextType | null>(null)
+export const AlertsContext = createContext<AlertsContextType | null>(null)
 
 export type AlertsProviderProps = {
-  children: React.ReactNode,
+  children: ReactNode,
 }
 
-const AlertProvider: React.FC<AlertsProviderProps> = ({ children }) => {
-  const [alerts, setAlerts] = React.useState<Array<AlertItemType>>([])
+const AlertProvider: FC<AlertsProviderProps> = ({ children }) => {
+  const [alerts, setAlerts] = useState<Array<AlertItemType>>([])
+  const alertsRef = useRef(alerts)
 
   const addAlert = (data: AddAlertProps) => {
     const alert = {
       id: Math.random().toString(),
       ...data
-    }
-    setAlerts([...alerts, alert])
+    } as AlertItemType
+
+    alert.timeoutToDisappear = setTimeout(() => {
+      removeAlert(alert.id)
+    }, DURATION)
+
+    alertsRef.current = [...alertsRef.current, alert]
+    setAlerts(alertsRef.current)
   }
 
   const removeAlert = (id: string) => {
-    setAlerts(alerts.filter(alert => alert.id !== id))
+    const alertToRemove = alertsRef.current.find(alert => alert.id === id)
+    if (!alertToRemove) return null
+    clearTimeout(alertToRemove.timeoutToDisappear)
+
+    alertsRef.current = alertsRef.current.filter(alert => alert.id !== id)
+    setAlerts(alertsRef.current)
   }
 
   return (<AlertsContext.Provider value={{ alerts, addAlert, removeAlert }}>{children}</AlertsContext.Provider>)
