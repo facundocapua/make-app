@@ -1,5 +1,6 @@
-import { formatPrice } from '@/utils/price'
+import { formatPrice } from '@/utils/format'
 import { useState } from 'react'
+import { EditIcon } from '../Icons'
 import CancelIcon from '../Icons/CancelIcon'
 import CheckIcon from '../Icons/CheckIcon'
 
@@ -47,7 +48,12 @@ export default function PrinceInfo ({ price, deposit, onChange }: Props) {
                 </button>
               </div>
             )
-            : (<p className='p-2' onClick={() => setShowInput(!showInput)}>{formatPrice(deposit)}</p>)
+            : (
+              <p className='flex items-center p-2' onClick={() => setShowInput(!showInput)}>
+                {formatPrice(deposit)}
+                <EditIcon className='w-4 h-4 ml-1 text-rose-700' />
+              </p>
+            )
         }
       </div>
     </>

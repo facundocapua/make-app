@@ -1,6 +1,6 @@
 import { ClockIcon } from '@/components/Icons'
 import { EventType } from '@/types/event'
-import { formatTime } from '@/utils/date'
+import { formatTime, formatDisplayName } from '@/utils/format'
 
 export default function EventItem ({ event }: { event: EventType }) {
   const { fullName, date } = event
@@ -14,7 +14,7 @@ export default function EventItem ({ event }: { event: EventType }) {
       </div>
 
       <div className='p-2'>
-        <h3>{fullName}</h3>
+        <h3>{formatDisplayName(fullName)}</h3>
       </div>
     </article>
   )

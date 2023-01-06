@@ -4,7 +4,7 @@ import type { EventType } from '@/types/event'
 import EventModal from './EventModal'
 import EventList from './EventList'
 import { deleteEvent } from '@/services/api/deleteEvent'
-import { formatDate } from '@/utils/date'
+import { formatDate } from '@/utils/format'
 
 export type GroupedEventItemType = {
   date: string,
@@ -27,7 +27,17 @@ const groupByDate = (events: Array<EventType>): Array<GroupedEventItemType> => {
     current[dateIndex].events.push(item)
     return current
   }, {})
-  return Object.values(groupedEvents)
+  const response = Object.values(groupedEvents)
+  response.map((group) => {
+    group.events.sort((a, b) => {
+      const dateA = new Date(a.date)
+      const dateB = new Date(b.date)
+      return dateA.getTime() - dateB.getTime()
+    })
+
+    return group
+  })
+  return response
 }
 
 export default function GroupedEventList () {
@@ -38,6 +48,10 @@ export default function GroupedEventList () {
   const [scrollToToday, setScrollToToday] = useState(true)
 
   useEffect(() => {
+    if (loading) {
+      setScrollToToday(true)
+    }
+
     if (!loading && data) {
       const groupedEvents = groupByDate(data)
       setGroupedEvents(groupedEvents)

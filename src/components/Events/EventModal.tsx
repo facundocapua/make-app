@@ -1,6 +1,8 @@
 import { EventType } from '@/types/event'
-import { formatDateTime } from '@/utils/date'
+import { formatDateTime } from '@/utils/format'
 import { CloseIcon } from '../Icons'
+import DisplayNameInfo from './Fields/DisplayName'
+import EventTimeInfo from './EventTimeInfo'
 import PrinceInfo from './PrinceInfo'
 
 type Props = {
@@ -9,6 +11,15 @@ type Props = {
   onEdit: (event: EventType) => void
 }
 export default function EventModal ({ event, onClose, onEdit }: Props) {
+  const { fullName, date, duration, price, deposit } = event
+  const handleNameChange = (fullName: string) => {
+    onEdit({ ...event, fullName })
+  }
+
+  const handleDateChange = (date: string) => {
+    onEdit({ ...event, date })
+  }
+
   const handlePriceChange = (deposit: number) => {
     onEdit({ ...event, deposit })
   }
@@ -18,11 +29,11 @@ export default function EventModal ({ event, onClose, onEdit }: Props) {
       </div>
       <div className='fixed z-20 p-4 rounded-lg shadow-md left-4 right-4 top-1/3 bg-rose-200 shadow-rose-400/40'>
         <button className='absolute p-2 text-white bg-red-500 rounded-full -right-1 -top-1' onClick={() => onClose()}><CloseIcon className='w-4 h-4' /></button>
-        <h1 className="text-2xl font-bold">{event.fullName}</h1>
-        <p className="text-sm">{formatDateTime(event.date)}</p>
+        <DisplayNameInfo name={fullName} onChange={handleNameChange} />
+        <EventTimeInfo date={date} duration={duration} onDateChange={handleDateChange} />
 
         <div className='my-4'>
-          <PrinceInfo price={event.price} deposit={event.deposit} onChange={handlePriceChange} />
+          <PrinceInfo price={price} deposit={deposit} onChange={handlePriceChange} />
         </div>
       </div>
     </>
