@@ -1,5 +1,4 @@
 import { AlertType } from '@/types/alerts'
-import { useEffect } from 'react'
 import { CloseIcon, InfoIcon } from '@/components/Icons'
 
 type AlertProps = {
