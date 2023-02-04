@@ -6,6 +6,7 @@ import { authOptions } from '../auth/[...nextauth]'
 import { CALENDAR_NAME, getCalendar } from '@/services/google'
 import { deleteEvent, updateEvent } from '@/services/google/events'
 import { generateEventObject } from '@/utils/google'
+import { UserSession } from '@/types/session'
 
 type Response = {
   message: string
@@ -15,7 +16,7 @@ export default async function handler (
   req: NextApiRequest,
   res: NextApiResponse<Response>
 ) {
-  const session = await getServerSession(req, res, authOptions)
+  const session = await getServerSession(req, res, authOptions) as UserSession
   if (!session) {
     return res.status(401).json({ message: 'Unauthorized' })
   }

@@ -1,7 +1,7 @@
 import NextAuth, { NextAuthOptions } from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 import { refreshAccessToken, scopes } from '@/services/google/auth'
-import { JWTCallbackProps, SessionCallbackProps } from '@/services/google/types'
+import { SessionCallbackProps } from '@/services/google/types'
 
 export const authOptions:NextAuthOptions = {
   // Configure one or more authentication providers
@@ -20,7 +20,7 @@ export const authOptions:NextAuthOptions = {
     })
   ],
   callbacks: {
-    async jwt ({ token, user, account }: JWTCallbackProps) {
+    async jwt ({ token, user, account }) {
       // Initial sign in
       if (account && user) {
         return {

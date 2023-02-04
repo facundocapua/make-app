@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react'
 import type { EventType } from '@/types/event'
 import { updateEvent as updateEventService } from '@/services/api/updateEvent'
 import { deleteEvent as deleteEventService } from '@/services/api/deleteEvent'
+import { UserSession } from '@/types/session'
 
 type EventCollectionResponse = {
   data: Array<EventType> | undefined,
@@ -16,7 +17,7 @@ type EventCollectionResponse = {
 export default function useEventCollection (): EventCollectionResponse {
   const [events, setEvents] = useState <Array<EventType>>()
   const [loading, setLoading] = useState <boolean>(true)
-  const { data: session } = useSession()
+  const session = useSession().data as UserSession
   const { calendar } = useContext(UserContext)
 
   useEffect(() => {

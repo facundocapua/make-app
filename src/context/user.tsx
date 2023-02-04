@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import type { CalendarType } from '@/services/google'
 import { getCalendar } from '@/services/google'
 import { useSession, signOut } from 'next-auth/react'
+import { UserSession } from '@/types/session'
 
 export type UserContextType = {
   calendar?: CalendarType | null
@@ -17,7 +18,8 @@ export type UserProviderProps = {
 
 const UserProvider: React.FC<UserProviderProps> = ({ calendarName, children }) => {
   const [calendar, setCalendar] = React.useState<CalendarType | null>(null)
-  const { data: session } = useSession()
+  const sess = useSession()
+  const session = sess.data as UserSession
 
   useEffect(() => {
     const accessToken = session?.accessToken as string

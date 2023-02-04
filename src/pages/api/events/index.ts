@@ -7,6 +7,7 @@ import { CALENDAR_NAME, getCalendar } from '@/services/google'
 import { createEvent } from '@/services/google/events'
 import { GoogleEventType } from '@/services/google/types'
 import { generateEventObject } from '@/utils/google'
+import { UserSession } from '@/types/session'
 
 export default async function handler (
   req: NextApiRequest,
@@ -18,7 +19,7 @@ export default async function handler (
   }
 
   const data:EventType = req.body
-  const session = await getServerSession(req, res, authOptions)
+  const session = await getServerSession(req, res, authOptions) as UserSession
   if (!session) {
     return res.status(401).json({ message: 'Unauthorized' })
   }
