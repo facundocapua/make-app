@@ -1,4 +1,4 @@
-import { CancelIcon, CheckIcon } from '@/components/Icons'
+import { CancelIcon, CheckIcon, EditIcon } from '@/components/Icons'
 import { timeOptions } from '@/utils/datetime'
 import { formatDateComputer, formatDateTime, formatTime } from '@/utils/format'
 import { useEffect, useState } from 'react'
@@ -21,7 +21,12 @@ export default function DateField ({ date, onChange }: Props) {
   }, [onlyDate, onlyTime])
 
   if (!editing) {
-    return (<p className="ml-2 text-sm" onClick={handleShowInput}>{formatDateTime(date)}</p>)
+    return (
+      <div className='flex items-center' onClick={handleShowInput}>
+        <p className="ml-2 text-sm">{formatDateTime(date)}</p>
+        <EditIcon className='w-3 h-3 ml-1 text-rose-700' />
+      </div>
+    )
   }
 
   return (

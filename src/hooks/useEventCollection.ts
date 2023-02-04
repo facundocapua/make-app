@@ -4,11 +4,13 @@ import { UserContext } from '@/context/user'
 import { useSession } from 'next-auth/react'
 import type { EventType } from '@/types/event'
 import { updateEvent as updateEventService } from '@/services/api/updateEvent'
+import { deleteEvent as deleteEventService } from '@/services/api/deleteEvent'
 
 type EventCollectionResponse = {
   data: Array<EventType> | undefined,
   loading: boolean,
   updateEvent: (event: EventType) => void,
+  deleteEvent: (id: EventType['id']) => void
 }
 
 export default function useEventCollection (): EventCollectionResponse {
@@ -41,5 +43,11 @@ export default function useEventCollection (): EventCollectionResponse {
     setEvents(newEvents)
   }
 
-  return { data: events, loading, updateEvent }
+  const deleteEvent = (id: EventType['id']) => {
+    deleteEventService({ id })
+    const newEvents = events?.filter((e) => e.id !== id)
+    setEvents(newEvents)
+  }
+
+  return { data: events, loading, updateEvent, deleteEvent }
 }

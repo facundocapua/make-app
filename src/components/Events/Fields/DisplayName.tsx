@@ -32,7 +32,7 @@ export default function DisplayNameInfo ({ name, onChange }: Props) {
           ref={inputRef}
           onBlur={handleCancel}
         />
-        <button className='absolute px-2 py-1 rounded right-12 bottom-1 bg-rose-400' onClick={handleConfirm}>
+        <button className='absolute px-2 py-1 rounded right-12 bottom-1 bg-rose-400' onMouseDown={handleConfirm}>
           <CheckIcon className='w-6 h-6 text-rose-200' />
         </button>
         <button className='absolute px-2 py-1 rounded right-1 bottom-1 bg-rose-200' onClick={handleCancel}>

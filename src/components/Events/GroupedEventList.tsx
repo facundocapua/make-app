@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react'
 import type { EventType } from '@/types/event'
 import EventModal from './EventModal'
 import EventList from './EventList'
-import { deleteEvent } from '@/services/api/deleteEvent'
 import { formatDate } from '@/utils/format'
+import Spinner from '../Ui/Spinner'
 
 export type GroupedEventItemType = {
   date: string,
@@ -41,7 +41,7 @@ const groupByDate = (events: Array<EventType>): Array<GroupedEventItemType> => {
 }
 
 export default function GroupedEventList () {
-  const { data, loading, updateEvent } = useEventCollection()
+  const { data, loading, updateEvent, deleteEvent } = useEventCollection()
   const [groupedEvents, setGroupedEvents] = useState<Array<GroupedEventItemType>>()
   const [showModal, setShowModal] = useState(false)
   const [currentEvent, setCurrentEvent] = useState<EventType | null>(null)
@@ -61,7 +61,15 @@ export default function GroupedEventList () {
   useEffect(() => {
     if (scrollToToday && groupedEvents) {
       const today = new Date()
-      const firstDate = groupedEvents.find(({ date }) => new Date(date) >= today)
+      const firstDate = [...groupedEvents]
+        .sort((a, b) => {
+          const aDate = new Date(a.date)
+          const diffA = Math.abs(aDate.getTime() - today.getTime())
+          const bDate = new Date(b.date)
+          const diffB = Math.abs(bDate.getTime() - today.getTime())
+
+          return diffA - diffB
+        }).at(0)
       if (firstDate) {
         const interval = setInterval(() => {
           const element = document.getElementById(`events-${firstDate.date}`)
@@ -86,9 +94,7 @@ export default function GroupedEventList () {
   }
 
   const handleItemDelete = (id: EventType['id']) => {
-    deleteEvent({ id }).then(res => {
-      console.log({ res })
-    })
+    deleteEvent(id)
   }
 
   const handleUpdateItem = (event: EventType) => {
@@ -98,7 +104,7 @@ export default function GroupedEventList () {
   }
 
   if (loading || !data) {
-    return <>Loading...</>
+    return <Spinner />
   }
 
   return (

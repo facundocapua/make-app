@@ -47,8 +47,12 @@ export const formatDateTime = (date: string) => {
   return dateObj.toLocaleDateString('es-AR', options)
 }
 
-export const formatTime = (date:string): string => {
+export const formatTime = (date:string, round: boolean = true): string => {
   const dateObj = new Date(date)
+  if (round) {
+    const roundedMinutes = Math.round(dateObj.getMinutes() / 15) * 15
+    dateObj.setMinutes(roundedMinutes)
+  }
   const options: Intl.DateTimeFormatOptions = {
     hour: '2-digit',
     minute: '2-digit'
