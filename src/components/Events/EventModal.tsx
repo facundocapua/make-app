@@ -1,9 +1,10 @@
 import { EventType } from '@/types/event'
-import { CloseIcon } from '../Icons'
+import { CloseIcon, ShareIcon } from '../Icons'
 import DisplayNameInfo from './Fields/DisplayName'
 import EventTimeInfo from './EventTimeInfo'
 import PrinceInfo from './PrinceInfo'
 import NotesField from './Fields/NotesField'
+import { formatDateShort, formatTime } from '@/utils/format'
 
 type Props = {
   event: EventType
@@ -28,6 +29,21 @@ export default function EventModal ({ event, onClose, onEdit }: Props) {
     onEdit({ ...event, notes: value })
   }
 
+  const handleShare = () => {
+    const day = formatDateShort(date)
+    const time = formatTime(date)
+    const balance = Math.round(price - deposit)
+    const url = `/api/date?day=${day}&time=${time}&balance=${balance}`
+    if (navigator.share) {
+      navigator.share({
+        title: 'Tu turno',
+        url
+      })
+    } else {
+      console.log(url)
+    }
+  }
+
   return (
     <>
       <div className='fixed top-0 bottom-0 left-0 right-0 z-10 bg-white opacity-50' onClick={() => onClose()}>
@@ -43,6 +59,10 @@ export default function EventModal ({ event, onClose, onEdit }: Props) {
 
         <div className='my-4'>
           <NotesField value={String(notes)} onChange={handleNotesChange} />
+        </div>
+
+        <div>
+          <button onClick={handleShare}><ShareIcon className='w-6 h-6 text-gray-300 opacity-70 hover:opacity-100' /></button>
         </div>
       </div>
     </>
