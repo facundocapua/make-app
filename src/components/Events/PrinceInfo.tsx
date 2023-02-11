@@ -27,31 +27,31 @@ export default function PrinceInfo ({ price, deposit, onChange }: Props) {
 
   return (
     <>
-      <p className='text-lg'>Precio: {formatPrice(price)} <small>(Restan: {formatPrice(price - deposit)})</small></p>
-      <div className="flex items-center my-2">
+      <p className='text-lg text-gray-100'>Precio: {formatPrice(price)} <small>(Restan: {formatPrice(price - deposit)})</small></p>
+      <div className="flex items-center my-2 text-gray-100">
         Abonado:
         {
           showInput
             ? (
               <div className='relative'>
                 <input
-                  className="p-2 mx-2 rounded-lg outline-none focus:ring focus:ring-rose-400"
+                  className="p-2 mx-2 text-gray-100 bg-gray-500 rounded-lg outline-none focus:ring focus:ring-gray-400"
                   onChange={(e) => setNewDeposit(e.target.value)}
                   type='number'
                   value={newDeposit}
                 />
-                <button className='absolute px-2 py-1 rounded right-14 bottom-1 bg-rose-400' onClick={handleConfirm}>
-                  <CheckIcon className='w-6 h-6 text-rose-200' />
+                <button className='absolute px-2 py-1 bg-gray-200 rounded right-14 bottom-1' onClick={handleConfirm}>
+                  <CheckIcon className='w-6 h-6 text-gray-400' />
                 </button>
-                <button className='absolute px-2 py-1 rounded right-3 bottom-1 bg-rose-200' onClick={handleCancel}>
-                  <CancelIcon className='w-6 h-6 text-rose-400' />
+                <button className='absolute px-2 py-1 bg-gray-400 rounded right-3 bottom-1' onClick={handleCancel}>
+                  <CancelIcon className='w-6 h-6 text-gray-200' />
                 </button>
               </div>
             )
             : (
               <p className='flex items-center p-2' onClick={() => setShowInput(!showInput)}>
                 {formatPrice(deposit)}
-                <EditIcon className='w-4 h-4 ml-1 text-rose-700' />
+                <EditIcon className='w-4 h-4 ml-1 text-gray-400' />
               </p>
             )
         }

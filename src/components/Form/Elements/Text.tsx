@@ -11,9 +11,9 @@ export default function Text ({ label, placeholder, value, onChange, type = 'tex
   if (type === 'textarea') {
     return (
       <>
-        <label className="px-2 text-sm">{label}</label>
+        <label className="px-2 text-sm text-gray-200">{label}</label>
         <textarea
-          className="h-24 p-2 mx-2 mt-2 mb-4 text-sm rounded-lg outline-none resize-none focus:ring focus:ring-rose-400"
+          className="h-24 p-2 mx-2 mt-2 mb-4 text-sm rounded-lg outline-none resize-none focus:ring focus:ring-gray-400"
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder ?? label}
         >
@@ -25,9 +25,9 @@ export default function Text ({ label, placeholder, value, onChange, type = 'tex
 
   return (
     <>
-      <label className="px-2 text-sm">{label}</label>
+      <label className="px-2 text-sm text-gray-200">{label}</label>
       <input
-        className="p-2 mx-2 mt-2 mb-4 rounded-lg outline-none focus:ring focus:ring-rose-400"
+        className="p-2 mx-2 mt-2 mb-4 rounded-lg outline-none focus:ring focus:ring-gray-400"
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder ?? label}
         type={type}

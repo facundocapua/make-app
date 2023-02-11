@@ -14,9 +14,9 @@ export default function DisplayNameInfo ({ name, onChange }: Props) {
 
   if (!editing) {
     return (
-      <h1 className="flex items-center py-1 mb-2 text-2xl font-bold" onClick={handleShowInput}>
+      <h1 className="flex items-center py-1 mb-2 text-2xl font-bold text-gray-100" onClick={handleShowInput}>
         {formatDisplayName(name)}
-        <EditIcon className='w-4 h-4 ml-1 text-rose-700' />
+        <EditIcon className='w-4 h-4 ml-1 text-gray-400' />
       </h1>
     )
   }
@@ -25,18 +25,18 @@ export default function DisplayNameInfo ({ name, onChange }: Props) {
     <div className="flex items-center mb-2">
       <div className='relative'>
         <input
-          className="p-2 rounded-lg outline-none focus:ring focus:ring-rose-400"
+          className="p-2 text-gray-100 bg-gray-500 rounded-lg outline-none focus:ring focus:ring-gray-400"
           onChange={(e) => setNewValue(e.target.value)}
           value={newValue}
           placeholder='Nombre'
           ref={inputRef}
           onBlur={handleCancel}
         />
-        <button className='absolute px-2 py-1 rounded right-12 bottom-1 bg-rose-400' onMouseDown={handleConfirm}>
-          <CheckIcon className='w-6 h-6 text-rose-200' />
+        <button className='absolute px-2 py-1 bg-gray-200 rounded right-12 bottom-1' onMouseDown={handleConfirm}>
+          <CheckIcon className='w-6 h-6 text-gray-400' />
         </button>
-        <button className='absolute px-2 py-1 rounded right-1 bottom-1 bg-rose-200' onClick={handleCancel}>
-          <CancelIcon className='w-6 h-6 text-rose-400' />
+        <button className='absolute px-2 py-1 bg-gray-400 rounded right-1 bottom-1' onClick={handleCancel}>
+          <CancelIcon className='w-6 h-6 text-gray-200' />
         </button>
       </div>
     </div>

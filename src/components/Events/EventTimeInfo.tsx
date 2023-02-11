@@ -8,7 +8,7 @@ type Props = {
 
 export default function EventTimeInfo ({ date, onDateChange } : Props) {
   return (
-    <div className='flex items-center'>
+    <div className='flex items-center text-gray-200'>
       ¿Cuándo?
       <DateField date={date} onChange={onDateChange} />
     </div>

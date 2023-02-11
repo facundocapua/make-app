@@ -15,14 +15,14 @@ export default function EventItem ({ event }: { event: EventType }) {
   const isOld = new Date(date) < new Date()
 
   return (
-    <article className={`flex items-stretch mt-2 bg-red-100 rounded-lg cursor-pointer drop-shadow-xs shadow-red-200 grow ${heightForDuration[duration]} ${isOld ? 'opacity-40' : ''}`}>
-      <div className='flex items-center gap-1 px-4 text-lg bg-red-200 rounded-l-lg'>
+    <article className={`flex items-stretch mt-2 bg-gray-500 rounded-lg cursor-pointer drop-shadow-xs shadow-white-200 grow ${heightForDuration[duration]} ${isOld ? 'opacity-50' : ''}`}>
+      <div className='flex items-center gap-1 px-4 text-lg text-gray-200 bg-gray-600 rounded-l-lg'>
         <ClockIcon className='w-3 h-3' />
         <small>{formatTime(date)}</small>
       </div>
 
       <div className='flex items-center p-2'>
-        <h3>{formatDisplayName(fullName)} </h3> <small className='ml-1 text-xs text-stone-500'>({duration} mins)</small>
+        <h3 className='text-gray-100'>{formatDisplayName(fullName)} </h3> <small className='ml-1 text-xs text-gray-200'>({duration} mins)</small>
       </div>
     </article>
   )

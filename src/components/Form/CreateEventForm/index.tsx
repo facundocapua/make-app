@@ -36,7 +36,7 @@ export default function CreateEventForm () {
   }
 
   return (
-    <form onSubmit={handleSubmit} className='flex flex-col content-center justify-center p-2 mx-4 rounded-lg bg-rose-200'>
+    <form onSubmit={handleSubmit} className='flex flex-col content-center justify-center p-2 mx-4 bg-gray-600 rounded-lg'>
       <Text
         label="Nombre"
         value={fullName}
@@ -79,7 +79,7 @@ export default function CreateEventForm () {
         type='textarea'
       />
 
-      <button type='submit' className='p-2 mx-2 border-2 bg-rose-300 border-rose-400 rounded-xl hover:bg-rose-400 hover:text-rose-100'>Guardar</button>
+      <button type='submit' className='p-2 mx-2 text-gray-100 bg-gray-700 border-2 border-gray-400 rounded-xl hover:bg-gray-300 hover:text-gray-700'>Guardar</button>
     </form>
   )
 }

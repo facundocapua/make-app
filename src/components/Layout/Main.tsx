@@ -3,6 +3,7 @@ import { useSession } from 'next-auth/react'
 import Login from '@/components/Form/Login'
 import MainMenu from '@/components/Menu/MainMenu'
 import AlertContainer from '@/components/Ui/AlertContainer'
+import Image from 'next/image'
 
 type MainProps = {
   children: ReactNode
@@ -18,10 +19,12 @@ export default function Main ({ children }: MainProps) {
 
   return (
     <div className='grid content-center justify-center w-full bg-gray-300'>
-      <div className='relative flex flex-col w-screen h-screen max-w-md bg-rose-50'>
+      <div className='relative flex flex-col w-screen h-screen max-w-md bg-black'>
         <AlertContainer />
         <header className='flex items-center justify-center w-full py-4'>
-          <h1 className='text-2xl'>MakeApp</h1>
+          <h1 className='text-2xl'>
+            <Image src='/logo.png' alt='MakeApp' width={150} height={50} />
+          </h1>
         </header>
         <main className='min-h-0 overflow-y-auto grow shrink basis-0'>
           { session

@@ -24,31 +24,31 @@ export default function DateField ({ date, onChange }: Props) {
     return (
       <div className='flex items-center' onClick={handleShowInput}>
         <p className="ml-2 text-sm">{formatDateTime(date)}</p>
-        <EditIcon className='w-3 h-3 ml-1 text-rose-700' />
+        <EditIcon className='w-3 h-3 ml-1 text-gray-400' />
       </div>
     )
   }
 
   return (
     <div className='relative flex items-center ml-2'>
-      <div className='p-1 bg-white rounded-lg w-50 focus:ring focus:ring-rose-400 w-60'>
+      <div className='p-1 bg-gray-500 rounded-lg w-50 w-60'>
         <input
-          className="w-24 text-sm outline-none"
+          className="w-24 text-sm bg-gray-500 outline-none"
           onChange={(e) => setOnlyDate(e.target.value)}
           value={onlyDate}
           type='date'
         />
-        <select className='ml-1 text-sm outline-none' value={onlyTime} onChange={(e) => setOnlyTime(e.target.value)}>
+        <select className='ml-1 text-sm bg-gray-500 outline-none' value={onlyTime} onChange={(e) => setOnlyTime(e.target.value)}>
           { timeOptions.map((time) => (
             <option key={time} value={time}>{time}</option>
           )) }
         </select>
       </div>
-      <button className='absolute px-2 py-1 rounded right-10 bottom-1 bg-rose-400' onClick={handleConfirm}>
-        <CheckIcon className='w-4 h-4 text-rose-200' />
+      <button className='absolute px-2 py-1 bg-gray-200 rounded right-10 bottom-1' onClick={handleConfirm}>
+        <CheckIcon className='w-4 h-4 text-gray-400' />
       </button>
-      <button className='absolute px-2 py-1 rounded right-1 bottom-1 bg-rose-200' onClick={handleCancel}>
-        <CancelIcon className='w-4 h-4 text-rose-400' />
+      <button className='absolute px-2 py-1 bg-gray-400 rounded right-1 bottom-1' onClick={handleCancel}>
+        <CancelIcon className='w-4 h-4 text-gray-200' />
       </button>
     </div>
 

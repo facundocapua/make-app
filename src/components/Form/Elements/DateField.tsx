@@ -12,8 +12,8 @@ export default function DateField ({ label, value, onChange }: Props) {
 
   return (
     <>
-      <label className="px-2 text-sm">{label}</label>
-      <div className='p-2 mx-2 mt-2 mb-4 bg-white rounded-lg w-50 focus:ring focus:ring-rose-400'>
+      <label className="px-2 text-sm text-gray-200">{label}</label>
+      <div className='p-2 mx-2 mt-2 mb-4 bg-white rounded-lg w-50'>
         <input
           className="outline-none w-28"
           onChange={(e) => setOnlyDate(e.target.value)}
