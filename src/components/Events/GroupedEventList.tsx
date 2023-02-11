@@ -115,7 +115,7 @@ export default function GroupedEventList () {
           const isOld = new Date(date) < new Date()
           return (
             <div key={date} id={`events-${date}`} className='mb-4'>
-              <h2 className={`text-xl font-bold ${isOld ? 'opacity-50' : ''}`}>{formatDate(date)}</h2>
+              <h2 className={`text-xl font-bold text-gray-100 ${isOld ? 'opacity-60' : ''}`}>{formatDate(date)}</h2>
               <EventList events={events} onItemClick={handleItemClick} onItemDelete={handleItemDelete} />
             </div>
           )
