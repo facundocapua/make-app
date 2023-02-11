@@ -59,3 +59,9 @@ export const formatTime = (date:string, round: boolean = true): string => {
   }
   return dateObj.toLocaleString('es-AR', options)
 }
+
+export const formatNotes = (notes: string) => {
+  if (notes === '') return 'Sin notas'
+
+  return notes
+}

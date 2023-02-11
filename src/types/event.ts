@@ -7,4 +7,5 @@ export type EventType = {
   duration: 30 | 45 | 60 | 90 | 120,
   includesTest: boolean,
   testDate?: string,
+  notes?: string
 }

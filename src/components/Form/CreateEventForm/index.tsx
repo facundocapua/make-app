@@ -17,9 +17,10 @@ export default function CreateEventForm () {
     updateDuration,
     updateDeposit,
     updatePrice,
+    updateNotes,
     ...state
   } = useForm()
-  const { fullName, date, deposit, price, duration } = state
+  const { fullName, date, deposit, price, duration, notes } = state
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -69,6 +70,13 @@ export default function CreateEventForm () {
         value={String(deposit)}
         onChange={updateDeposit}
         type='number'
+      />
+
+      <Text
+        label="Notas"
+        value={String(notes)}
+        onChange={updateNotes}
+        type='textarea'
       />
 
       <button type='submit' className='p-2 mx-2 border-2 bg-rose-300 border-rose-400 rounded-xl hover:bg-rose-400 hover:text-rose-100'>Guardar</button>

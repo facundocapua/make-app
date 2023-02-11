@@ -5,9 +5,9 @@ type Props = {
   onChange: (value: string) => void
 }
 
-type Return = {
+type Return<T = HTMLInputElement> = {
   editing: boolean
-  inputRef: RefObject<HTMLInputElement>
+  inputRef: RefObject<T>
   newValue: string
   setNewValue: Dispatch<SetStateAction<string>>
   handleShowInput: () => void
@@ -15,15 +15,16 @@ type Return = {
   handleCancel: () => void
 }
 
-export default function useEditInline ({ value, onChange }: Props): Return {
+export default function useEditInline<T=HTMLInputElement> ({ value, onChange }: Props): Return<T> {
   const [editing, setEditing] = useState(false)
   const [newValue, setNewValue] = useState(value)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const inputRef = useRef<T>(null)
 
   const handleShowInput = () => {
     setEditing(!editing)
     setTimeout(() => {
-      inputRef.current?.focus()
+      const input = inputRef.current as HTMLInputElement | HTMLTextAreaElement
+      input?.focus()
     }, 0)
   }
 

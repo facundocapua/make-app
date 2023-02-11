@@ -8,7 +8,7 @@ export const generateEventObject = (data: EventType) => {
   endDate.setMinutes(startDate.getMinutes() + duration)
 
   return {
-    summary: `Maquillaje para ${fullName}`,
+    summary: `Cita para ${fullName}`,
     description: JSON.stringify(data),
     source: {
       title: 'MakeApp',
@@ -25,8 +25,8 @@ export const generateEventObject = (data: EventType) => {
     reminders: {
       useDefault: false,
       overrides: [
-        { method: 'popup', minutes: 60 },
-        { method: 'email', minutes: 24 * 60 }
+        // { method: 'popup', minutes: 60 },
+        { method: 'popup', minutes: 24 * 60 }
       ]
     }
   }

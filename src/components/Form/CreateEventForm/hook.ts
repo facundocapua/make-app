@@ -8,7 +8,8 @@ const ACTIONS_TYPES = {
   UPDATE_INCLUDES_TEST: 'update_includes_test',
   UPDATE_TEST_DATE: 'update_test_date',
   UPDATE_PRICE: 'update_price',
-  UPDATE_DEPOSIT: 'update_deposit'
+  UPDATE_DEPOSIT: 'update_deposit',
+  UPDATE_NOTES: 'update_notes'
 }
 
 type ActionType<T> = {
@@ -37,6 +38,9 @@ const ACTIONS = {
   },
   [ACTIONS_TYPES.UPDATE_DEPOSIT]: (state: Omit<EventType, 'id'>, action: ActionType<EventType['deposit']>): Omit<EventType, 'id'> => {
     return { ...state, deposit: action.payload }
+  },
+  [ACTIONS_TYPES.UPDATE_NOTES]: (state: Omit<EventType, 'id'>, action: ActionType<EventType['notes']>): Omit<EventType, 'id'> => {
+    return { ...state, notes: action.payload }
   }
 }
 
@@ -46,13 +50,14 @@ const reducer = (state: Omit<EventType, 'id'>, action: any) => {
 }
 
 type UseFormResponse = Omit<EventType, 'id'> & {
-  updateFullname: (fullName: string) => void,
-  updateDate: (date: string) => void,
-  updateDuration: (duration: number) => void,
-  updateIncludesTest: (includesTest: boolean) => void,
-  updateTestDate: (testDate: string) => void,
-  updatePrice: (price: string) => void,
+  updateFullname: (fullName: string) => void
+  updateDate: (date: string) => void
+  updateDuration: (duration: number) => void
+  updateIncludesTest: (includesTest: boolean) => void
+  updateTestDate: (testDate: string) => void
+  updatePrice: (price: string) => void
   updateDeposit: (deposit: string) => void
+  updateNotes: (notes: string) => void
 }
 
 export default function useForm (): UseFormResponse {
@@ -63,7 +68,8 @@ export default function useForm (): UseFormResponse {
     testDate: '',
     duration: 60,
     price: parseInt(process.env.NEXT_PUBLIC_DEFAULT_PRICE ?? ''),
-    deposit: parseInt(process.env.NEXT_PUBLIC_DEFAULT_PRICE ?? '') / 2
+    deposit: parseInt(process.env.NEXT_PUBLIC_DEFAULT_PRICE ?? '') / 2,
+    notes: ''
   })
 
   return {
@@ -74,6 +80,7 @@ export default function useForm (): UseFormResponse {
     updateIncludesTest: (includesTest: boolean) => dispatch({ type: ACTIONS_TYPES.UPDATE_INCLUDES_TEST, payload: includesTest }),
     updateTestDate: (testDate: string) => dispatch({ type: ACTIONS_TYPES.UPDATE_TEST_DATE, payload: testDate }),
     updatePrice: (price: string) => dispatch({ type: ACTIONS_TYPES.UPDATE_PRICE, payload: price }),
-    updateDeposit: (deposit: string) => dispatch({ type: ACTIONS_TYPES.UPDATE_DEPOSIT, payload: deposit })
+    updateDeposit: (deposit: string) => dispatch({ type: ACTIONS_TYPES.UPDATE_DEPOSIT, payload: deposit }),
+    updateNotes: (notes: string) => dispatch({ type: ACTIONS_TYPES.UPDATE_NOTES, payload: notes })
   }
 }

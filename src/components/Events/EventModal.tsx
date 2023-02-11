@@ -3,6 +3,7 @@ import { CloseIcon } from '../Icons'
 import DisplayNameInfo from './Fields/DisplayName'
 import EventTimeInfo from './EventTimeInfo'
 import PrinceInfo from './PrinceInfo'
+import NotesField from './Fields/NotesField'
 
 type Props = {
   event: EventType
@@ -10,9 +11,8 @@ type Props = {
   onEdit: (event: EventType) => void
 }
 export default function EventModal ({ event, onClose, onEdit }: Props) {
-  const { fullName, date, duration, price, deposit } = event
+  const { fullName, date, duration, price, deposit, notes } = event
   const handleNameChange = (fullName: string) => {
-    console.log({ fullName })
     onEdit({ ...event, fullName })
   }
 
@@ -23,6 +23,11 @@ export default function EventModal ({ event, onClose, onEdit }: Props) {
   const handlePriceChange = (deposit: number) => {
     onEdit({ ...event, deposit })
   }
+
+  const handleNotesChange = (value: string) => {
+    onEdit({ ...event, notes: value })
+  }
+
   return (
     <>
       <div className='fixed top-0 bottom-0 left-0 right-0 z-10 bg-white opacity-50' onClick={() => onClose()}>
@@ -34,6 +39,10 @@ export default function EventModal ({ event, onClose, onEdit }: Props) {
 
         <div className='my-4'>
           <PrinceInfo price={price} deposit={deposit} onChange={handlePriceChange} />
+        </div>
+
+        <div className='my-4'>
+          <NotesField value={String(notes)} onChange={handleNotesChange} />
         </div>
       </div>
     </>
