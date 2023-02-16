@@ -29,16 +29,22 @@ export default function EventModal ({ event, onClose, onEdit }: Props) {
     onEdit({ ...event, notes: value })
   }
 
-  const handleShare = () => {
+  const handleShare = async () => {
     const day = formatDateShort(date)
     const time = formatTime(date)
     const balance = Math.round(price - deposit)
     const url = `/api/date?day=${day}&time=${time}&balance=${balance}`
-    if (navigator.share) {
-      navigator.share({
-        title: 'Tu turno',
-        url
-      })
+    const blob = await fetch(url).then(res => res.blob())
+    const shareData = {
+      title: 'Tu turno',
+      files: [
+        new File([blob], 'tu-turno.png', {
+          type: blob.type
+        })
+      ]
+    }
+    if (navigator.canShare && navigator.canShare(shareData)) {
+      navigator.share(shareData)
     } else {
       console.log(url)
     }
@@ -58,7 +64,7 @@ export default function EventModal ({ event, onClose, onEdit }: Props) {
         </div>
 
         <div className='my-4'>
-          <NotesField value={String(notes)} onChange={handleNotesChange} />
+          <NotesField value={notes ?? ''} onChange={handleNotesChange} />
         </div>
 
         <div>
