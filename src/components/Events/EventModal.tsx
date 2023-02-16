@@ -36,7 +36,6 @@ export default function EventModal ({ event, onClose, onEdit }: Props) {
     const url = 'https://www.makeapp.ar/date.jpg'
     const res = await fetch(url)
     const blob = await res.blob()
-    console.log(res)
     const shareData = {
       files: [
         new File([blob],
@@ -51,7 +50,7 @@ export default function EventModal ({ event, onClose, onEdit }: Props) {
       title: 'Tu turno',
       text: `Hola ${fullName}! 
 Tu turno es el 🗓️ *${day}* a las 🕐 *${time}*. 
-Te resta por pagar 💰 *$${balance}*
+Tu saldo es 💰 *$${balance}*
 
 Te espero en mi estudio 🏠 Garibaldi 1082
 Se solicita puntualidad.
@@ -59,15 +58,12 @@ Se solicita puntualidad.
 Te espero!
 `
     }
-    console.log(shareData)
     if (navigator.canShare && navigator.canShare(shareData)) {
       try {
         await navigator.share(shareData)
       } catch (err) {
         console.log(err)
       }
-    } else {
-      console.log(url)
     }
   }
 
