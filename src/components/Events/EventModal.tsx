@@ -34,16 +34,21 @@ export default function EventModal ({ event, onClose, onEdit }: Props) {
     const time = formatTime(date)
     const balance = Math.round(price - deposit)
     const url = 'https://www.makeapp.ar/date.jpg'
-    const blob = await fetch(url).then(res => res.blob())
+    const res = await fetch(url)
+    const blob = await res.blob()
     const shareData = {
       title: 'Tu turno',
       text: `Hola ${fullName}! 
 Tu turno es el 🗓️ *${day}* a las 🕐 *${time}*. 
 Te resta por pagar 💰 *$${balance}*`,
       files: [
-        new File([blob], 'tu-turno.jpg', {
-          type: blob.type
-        })
+        new File([blob],
+          'tu-turno.jpg',
+          {
+            type: 'image/jpeg',
+            lastModified: new Date().getTime()
+          }
+        )
       ]
     }
     console.log(shareData)
