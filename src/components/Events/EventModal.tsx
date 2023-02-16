@@ -37,10 +37,6 @@ export default function EventModal ({ event, onClose, onEdit }: Props) {
     const res = await fetch(url)
     const blob = await res.blob()
     const shareData = {
-      title: 'Tu turno',
-      text: `Hola ${fullName}! 
-Tu turno es el 🗓️ *${day}* a las 🕐 *${time}*. 
-Te resta por pagar 💰 *$${balance}*`,
       files: [
         new File([blob],
           'tu-turno.jpg',
@@ -49,7 +45,11 @@ Te resta por pagar 💰 *$${balance}*`,
             lastModified: new Date().getTime()
           }
         )
-      ]
+      ],
+      title: 'Tu turno',
+      text: `Hola ${fullName}! 
+Tu turno es el 🗓️ *${day}* a las 🕐 *${time}*. 
+Te resta por pagar 💰 *$${balance}*`
     }
     console.log(shareData)
     if (navigator.canShare && navigator.canShare(shareData)) {
