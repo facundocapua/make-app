@@ -35,6 +35,7 @@ export default function EventModal ({ event, onClose, onEdit }: Props) {
     const balance = Math.round(price - deposit)
     const url = `/api/date?day=${day}&time=${time}&balance=${balance}`
     const blob = await fetch(url).then(res => res.blob())
+    console.log(blob)
     const shareData = {
       title: 'Tu turno',
       files: [
@@ -43,8 +44,13 @@ export default function EventModal ({ event, onClose, onEdit }: Props) {
         })
       ]
     }
+    console.log(shareData)
     if (navigator.canShare && navigator.canShare(shareData)) {
-      navigator.share(shareData)
+      try {
+        await navigator.share(shareData)
+      } catch (err) {
+        console.log(err)
+      }
     } else {
       console.log(url)
     }
