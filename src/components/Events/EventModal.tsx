@@ -55,7 +55,7 @@ Tu saldo es 💰 *$${balance}*
 Te espero en mi estudio 🏠 Garibaldi 1082
 Se solicita puntualidad.
 
-Te espero!
+Muchas gracias!
 `
     }
     if (navigator.canShare && navigator.canShare(shareData)) {
