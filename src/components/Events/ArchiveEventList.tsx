@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import type { EventType } from '@/types/event'
 import EventModal from './EventModal'
 import EventList from './EventList'
@@ -6,24 +6,10 @@ import { formatDate } from '@/utils/format'
 import Spinner from '../Ui/Spinner'
 import useGroupedEvents from './hooks/useGroupedEvents'
 
-export default function GroupedEventList () {
-  const { data, loading, updateEvent, deleteEvent, firstDate } = useGroupedEvents({ onlyFutureEvents: true })
+export default function ArchiveEventList () {
+  const { data, loading, updateEvent, deleteEvent } = useGroupedEvents({ onlyFutureEvents: false })
   const [showModal, setShowModal] = useState(false)
   const [currentEvent, setCurrentEvent] = useState<EventType | null>(null)
-  const [scrollToToday, setScrollToToday] = useState(true)
-
-  useEffect(() => {
-    if (scrollToToday && firstDate) {
-      const interval = setInterval(() => {
-        const element = document.getElementById(`events-${firstDate}`)
-        if (element) {
-          element.scrollIntoView()
-          setScrollToToday(false)
-          clearInterval(interval)
-        }
-      }, 100)
-    }
-  }, [scrollToToday, firstDate])
 
   const handleItemClick = (event: EventType) => {
     setShowModal(true)

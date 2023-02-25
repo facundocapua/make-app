@@ -9,3 +9,12 @@ export type EventType = {
   testDate?: string,
   notes?: string
 }
+
+export type GroupedEventItemType = {
+  date: string,
+  events: Array<EventType>,
+}
+
+export type GroupedEventCollection = {
+  [key: string]: GroupedEventItemType
+}

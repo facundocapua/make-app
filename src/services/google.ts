@@ -70,14 +70,24 @@ export const getCalendar = ({ name, accessToken }: GetCalendarProps):Promise<Cal
     })
 }
 
-type GetEventsProps = {
-  calendarId: string,
-  accessToken: string,
+export type GetEventsProps = {
+  calendarId: string
+  accessToken: string
+  since?: Date
 }
 
-export const listEvents = ({ calendarId, accessToken }: GetEventsProps):Promise<Array<EventType>> => {
+export const listEvents = ({ calendarId, accessToken, since }: GetEventsProps):Promise<Array<EventType>> => {
+  const params: {[key: string]: string} = {
+    orderBy: 'startTime',
+    singleEvents: 'true'
+  }
+
+  if (since) {
+    params.timeMin = since.toISOString()
+  }
+
   return makeApiCall({
-    url: `/calendar/v3/calendars/${calendarId}/events?orderBy=startTime&singleEvents=true`,
+    url: `/calendar/v3/calendars/${calendarId}/events?${new URLSearchParams(params)}`,
     accessToken
   })
     .then(res => res.json())

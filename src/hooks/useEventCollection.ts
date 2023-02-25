@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react'
-import { listEvents } from '@/services/google'
+import { GetEventsProps, listEvents } from '@/services/google'
 import { UserContext } from '@/context/user'
 import { useSession } from 'next-auth/react'
 import type { EventType } from '@/types/event'
@@ -14,7 +14,11 @@ type EventCollectionResponse = {
   deleteEvent: (id: EventType['id']) => void
 }
 
-export default function useEventCollection (): EventCollectionResponse {
+type Props = {
+  onlyFutureEvents?: boolean
+}
+
+export default function useEventCollection ({ onlyFutureEvents }: Props = { onlyFutureEvents: false }): EventCollectionResponse {
   const [events, setEvents] = useState <Array<EventType>>()
   const [loading, setLoading] = useState <boolean>(true)
   const session = useSession().data as UserSession
@@ -24,13 +28,19 @@ export default function useEventCollection (): EventCollectionResponse {
     const calendarId = calendar?.id ?? ''
     const accessToken = session?.accessToken ?? ''
     if (calendarId !== '' && accessToken !== '') {
+      const params: GetEventsProps = { calendarId, accessToken: String(accessToken) }
+      if (onlyFutureEvents) {
+        const today = new Date()
+        params.since = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+      }
+
       setLoading(true)
-      listEvents({ calendarId, accessToken: String(accessToken) }).then((events: Array<EventType>) => {
+      listEvents(params).then((events: Array<EventType>) => {
         setEvents(events)
         setLoading(false)
       })
     }
-  }, [session?.accessToken, calendar?.id])
+  }, [session?.accessToken, calendar?.id, onlyFutureEvents])
 
   const updateEvent = (event: EventType) => {
     updateEventService(event)

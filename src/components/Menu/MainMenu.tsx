@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { signOut } from 'next-auth/react'
-import { HomeIcon, AddIcon, ExitIcon } from '@/components/Icons'
+import { HomeIcon, AddIcon, ExitIcon, ArchiveIcon, MoneyIcon } from '@/components/Icons'
 
 export default function MainMenu () {
   return (
@@ -8,9 +8,15 @@ export default function MainMenu () {
       <Link href="/">
         <HomeIcon className='w-8 h-8 text-white transition-transform hover:scale-125' />
       </Link>
+      <Link href="/archive">
+        <ArchiveIcon className='w-8 h-8 text-white transition-transform hover:scale-125' />
+      </Link>
       <Link href="/create">
         <AddIcon className='w-12 h-12 text-gray-700 transition-transform bg-white rounded-full hover:scale-125' />
       </Link>
+      <span title='Proximamente' aria-label='Proximamente'>
+        <MoneyIcon className='w-8 h-8 text-white transition-transform opacity-30' />
+      </span>
       <button aria-label='Sign Out' title='Sign Out' onClick={() => signOut()}>
         <ExitIcon className='w-8 h-8 text-white transition-transform hover:scale-125' />
       </button>
