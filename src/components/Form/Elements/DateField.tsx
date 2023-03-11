@@ -20,7 +20,7 @@ export default function DateTimeField ({ label, value, onChange }: Props) {
           value={onlyDate}
           type='date'
         />
-        <CalendarIcon className='absolute w-5 h-5 text-gray-600 top-[10px] left-[105px] pointer-events-none' />
+        <CalendarIcon className='custom-calendar-icon absolute w-5 h-5 text-gray-600 top-[10px] left-[105px] pointer-events-none' />
       </div>
     </>
   )
