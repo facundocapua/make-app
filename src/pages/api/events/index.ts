@@ -5,9 +5,9 @@ import { unstable_getServerSession as getServerSession } from 'next-auth/next'
 import { authOptions } from '../auth/[...nextauth]'
 import { CALENDAR_NAME, getCalendar } from '@/services/google'
 import { createEvent } from '@/services/google/events'
-import { GoogleEventType } from '@/services/google/types'
+import type { GoogleEventType } from '@/services/google/types'
 import { generateEventObject } from '@/utils/google'
-import { UserSession } from '@/types/session'
+import type { UserSession } from '@/types/session'
 
 export default async function handler (
   req: NextApiRequest,

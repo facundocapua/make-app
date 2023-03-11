@@ -1,5 +1,6 @@
-import { AlertItemType, AlertType } from '@/types/alerts'
-import { createContext, ReactNode, useRef, useState, FC } from 'react'
+import type { AlertItemType, AlertType } from '@/types/alerts'
+import type { ReactNode, FC } from 'react'
+import { createContext, useRef, useState } from 'react'
 
 const DURATION = 3000
 

@@ -1,11 +1,12 @@
 import { useState, useEffect, useContext } from 'react'
-import { GetEventsProps, listEvents } from '@/services/google'
+import type { GetEventsProps } from '@/services/google'
+import { listEvents } from '@/services/google'
 import { UserContext } from '@/context/user'
 import { useSession } from 'next-auth/react'
 import type { EventType } from '@/types/event'
 import { updateEvent as updateEventService } from '@/services/api/updateEvent'
 import { deleteEvent as deleteEventService } from '@/services/api/deleteEvent'
-import { UserSession } from '@/types/session'
+import type { UserSession } from '@/types/session'
 
 type EventCollectionResponse = {
   data: Array<EventType> | undefined,

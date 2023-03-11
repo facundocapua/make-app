@@ -1,6 +1,7 @@
 
 import { useContext } from 'react'
-import { AlertsContext, AlertsContextType } from '@/context/alerts'
+import type { AlertsContextType } from '@/context/alerts'
+import { AlertsContext } from '@/context/alerts'
 import Alert from './Alert'
 
 export default function AlertContainer () {

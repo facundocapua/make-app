@@ -9,17 +9,24 @@ export type CalendarType = {
   timeZone: string
 }
 
+const apiUrlsByService = {
+  calendar: 'https://www.googleapis.com/',
+  sheets: 'https://sheets.googleapis.com/'
+}
+
 type MakeApiCallProps = {
   url: string,
   accessToken: string,
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE',
+  service?: keyof typeof apiUrlsByService,
   data?: any,
 }
 
 export const makeApiCall = (props: MakeApiCallProps):Promise<Response> => {
-  const { url, accessToken, method = 'GET', data } = props
+  const { url, accessToken, method = 'GET', data, service = 'calendar' } = props
+  const apiUrl = apiUrlsByService[service]
 
-  return fetch(`https://www.googleapis.com${url}`, {
+  return fetch(`${apiUrl}${url}`, {
     method,
     headers: {
       'Content-Type': 'application/json',

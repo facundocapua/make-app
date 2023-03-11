@@ -8,7 +8,7 @@ import {
   Type
 } from 'react-swipeable-list'
 import 'react-swipeable-list/dist/styles.css'
-import { EventType } from '@/types/event'
+import type { EventType } from '@/types/event'
 import DeleteIcon from '../Icons/DeleteIcon'
 
 type TrailingActionsProps = {

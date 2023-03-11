@@ -1,5 +1,5 @@
 import { CALENDAR_DEFAULT_TIMEZONE } from '@/services/google'
-import { EventType } from '@/types/event'
+import type { EventType } from '@/types/event'
 
 export const generateEventObject = (data: EventType) => {
   const { fullName, date, duration } = data

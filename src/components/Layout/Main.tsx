@@ -1,4 +1,5 @@
-import { ReactNode, useEffect } from 'react'
+import type { ReactNode } from 'react'
+import { useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import Login from '@/components/Form/Login'
 import MainMenu from '@/components/Menu/MainMenu'

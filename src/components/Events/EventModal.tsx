@@ -1,4 +1,4 @@
-import { EventType } from '@/types/event'
+import type { EventType } from '@/types/event'
 import { CloseIcon, ShareIcon } from '../Icons'
 import DisplayNameInfo from './Fields/DisplayName'
 import EventTimeInfo from './EventTimeInfo'

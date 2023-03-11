@@ -1,5 +1,5 @@
 import { ClockIcon } from '@/components/Icons'
-import { EventType } from '@/types/event'
+import type { EventType } from '@/types/event'
 import { formatTime, formatDisplayName } from '@/utils/format'
 
 const heightForDuration = {

@@ -1,5 +1,5 @@
 import useEventCollection from '@/hooks/useEventCollection'
-import { EventType, GroupedEventItemType } from '@/types/event'
+import type { EventType, GroupedEventItemType } from '@/types/event'
 import { groupByDate } from '@/utils/events'
 import { useEffect, useState } from 'react'
 

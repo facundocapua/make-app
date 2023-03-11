@@ -6,7 +6,7 @@ import { authOptions } from '../auth/[...nextauth]'
 import { CALENDAR_NAME, getCalendar } from '@/services/google'
 import { deleteEvent, updateEvent } from '@/services/google/events'
 import { generateEventObject } from '@/utils/google'
-import { UserSession } from '@/types/session'
+import type { UserSession } from '@/types/session'
 
 type Response = {
   message: string

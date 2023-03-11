@@ -1,4 +1,5 @@
-import { CalendarType, getCalendar } from '@/services/google'
+import type { CalendarType } from '@/services/google'
+import { getCalendar } from '@/services/google'
 import { useState, useEffect } from 'react'
 
 type CalendarProps = {

@@ -1,5 +1,5 @@
-import { AlertType } from '@/types/alerts'
 import { CloseIcon, InfoIcon } from '@/components/Icons'
+import { AlertType } from '@/types/alerts'
 
 type AlertProps = {
   type: AlertType,

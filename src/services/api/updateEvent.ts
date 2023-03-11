@@ -1,4 +1,4 @@
-import { EventType } from '@/types/event'
+import type { EventType } from '@/types/event'
 
 export const updateEvent = (event: EventType): Promise<EventType> => {
   return fetch(`/api/events/${event.id}`, {

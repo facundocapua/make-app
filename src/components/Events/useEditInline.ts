@@ -1,4 +1,5 @@
-import { useRef, useState, RefObject, Dispatch, SetStateAction } from 'react'
+import type { RefObject, Dispatch, SetStateAction } from 'react'
+import { useRef, useState } from 'react'
 
 type Props = {
   value: string

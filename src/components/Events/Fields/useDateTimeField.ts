@@ -1,5 +1,6 @@
 import { formatDateComputer, formatTime } from '@/utils/format'
-import { useEffect, useState, Dispatch, SetStateAction } from 'react'
+import type { Dispatch, SetStateAction } from 'react'
+import { useEffect, useState } from 'react'
 
 type Props = {
   value: string

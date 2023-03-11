@@ -1,5 +1,5 @@
-import { Account, Session, User } from 'next-auth'
-import { JWT } from 'next-auth/jwt'
+import type { Account, Session, User } from 'next-auth'
+import type { JWT } from 'next-auth/jwt'
 
 export type TokenType = JWT & {
   accessToken?: string,
