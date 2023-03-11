@@ -1,4 +1,4 @@
-import { EventType } from '@/types/event'
+import type { EventType } from '@/types/event'
 import { useReducer } from 'react'
 
 const ACTIONS_TYPES = {

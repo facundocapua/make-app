@@ -1,6 +1,7 @@
 import React, { useContext } from 'react'
 import { Text, DateField, Select } from '@/components/Form/Elements'
-import { AlertsContext, AlertsContextType } from '@/context/alerts'
+import type { AlertsContextType } from '@/context/alerts'
+import { AlertsContext } from '@/context/alerts'
 import { AlertType } from '@/types/alerts'
 import { useRouter } from 'next/router'
 import useForm from './hook'

@@ -2,7 +2,7 @@
 type Props<T = string> = {
   label: string
   value: T
-  options: string[]
+  options: string[] | readonly string[]
   onChange: (value: T) => void
 }
 

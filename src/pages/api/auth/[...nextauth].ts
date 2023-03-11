@@ -1,7 +1,8 @@
-import NextAuth, { NextAuthOptions } from 'next-auth'
+import type { NextAuthOptions } from 'next-auth'
+import NextAuth from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 import { refreshAccessToken, scopes } from '@/services/google/auth'
-import { SessionCallbackProps } from '@/services/google/types'
+import type { SessionCallbackProps } from '@/services/google/types'
 
 export const authOptions:NextAuthOptions = {
   // Configure one or more authentication providers

@@ -14,9 +14,9 @@ export default function MainMenu () {
       <Link href="/create">
         <AddIcon className='w-12 h-12 text-gray-700 transition-transform bg-white rounded-full hover:scale-125' />
       </Link>
-      <span title='Proximamente' aria-label='Proximamente'>
-        <MoneyIcon className='w-8 h-8 text-white transition-transform opacity-30' />
-      </span>
+      <Link href="/payment">
+        <MoneyIcon className='w-8 h-8 text-white transition-transform hover:scale-125' />
+      </Link>
       <button aria-label='Sign Out' title='Sign Out' onClick={() => signOut()}>
         <ExitIcon className='w-8 h-8 text-white transition-transform hover:scale-125' />
       </button>
