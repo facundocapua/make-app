@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { Text, DateField, Select } from '@/components/Form/Elements'
+import { Text, DateTimeField, Select } from '@/components/Form/Elements'
 import type { AlertsContextType } from '@/context/alerts'
 import { AlertsContext } from '@/context/alerts'
 import { AlertType } from '@/types/alerts'
@@ -44,7 +44,7 @@ export default function CreateEventForm () {
         onChange={updateFullname}
       />
 
-      <DateField label='Fecha' value={date} onChange={updateDate} />
+      <DateTimeField label='Fecha' value={date} onChange={updateDate} />
 
       <Select label='Duración (minutos)' value={String(duration)} options={durationOptions} onChange={(value) => updateDuration(Number(value))} />
 
