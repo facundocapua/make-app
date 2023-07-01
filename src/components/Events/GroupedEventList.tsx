@@ -40,7 +40,6 @@ export default function GroupedEventList () {
   }
 
   const handleUpdateItem = (event: EventType) => {
-    console.log({ event })
     updateEvent(event)
     setCurrentEvent(event)
   }

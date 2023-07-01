@@ -21,8 +21,8 @@ export default function EventModal ({ event, onClose, onEdit }: Props) {
     onEdit({ ...event, date })
   }
 
-  const handlePriceChange = (deposit: number) => {
-    onEdit({ ...event, deposit })
+  const handlePriceChange = (price: number, deposit: number) => {
+    onEdit({ ...event, price, deposit })
   }
 
   const handleNotesChange = (value: string) => {
