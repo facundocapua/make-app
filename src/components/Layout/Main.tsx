@@ -7,10 +7,11 @@ import AlertContainer from '@/components/Ui/AlertContainer'
 import Image from 'next/image'
 
 type MainProps = {
+  isPublic: boolean
   children: ReactNode
 }
 
-export default function Main ({ children }: MainProps) {
+export default function Main ({ isPublic, children }: MainProps) {
   const { data: session } = useSession()
 
   useEffect(() => {
@@ -28,7 +29,7 @@ export default function Main ({ children }: MainProps) {
           </h1>
         </header>
         <main className='min-h-0 overflow-y-auto grow shrink basis-0'>
-          { session
+          { session || isPublic
             ? (
               <>{children}</>
             )

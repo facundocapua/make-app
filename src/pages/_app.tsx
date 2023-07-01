@@ -10,11 +10,13 @@ function MyApp ({
   Component,
   pageProps: { session, ...pageProps }
 }: AppProps) {
+  const { isPublic } = pageProps
+
   return (
     <SessionProvider session={session}>
       <UserContextProvider accessToken={session?.accessToken} calendarName={CALENDAR_NAME}>
         <AlertProvider>
-          <Main>
+          <Main isPublic={isPublic}>
             <Component {...pageProps} />
           </Main>
         </AlertProvider>
