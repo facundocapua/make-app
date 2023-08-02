@@ -1,4 +1,3 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { EventType } from '@/types/event'
 import { CALENDAR_NAME, getCalendar } from '@/services/google'
 import { deleteEvent, updateEvent } from '@/services/google/events'

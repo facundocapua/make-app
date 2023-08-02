@@ -1,8 +1,6 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
 import type { EventType } from '@/types/event'
 import { CALENDAR_NAME, getCalendar } from '@/services/google'
 import { createEvent } from '@/services/google/events'
-import type { GoogleEventType } from '@/services/google/types'
 import { generateEventObject } from '@/utils/google'
 import type { UserSession } from '@/types/session'
 import { getServerSession } from 'next-auth'
