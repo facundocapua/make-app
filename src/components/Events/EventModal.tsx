@@ -33,7 +33,7 @@ export default function EventModal ({ event, onClose, onEdit }: Props) {
     const day = formatDateShort(date)
     const time = formatTime(date)
     const balance = Math.round(price - deposit)
-    const url = 'https://www.makeapp.ar/date.jpg'
+    const url = 'https://app.makeapp.ar/date.jpg'
     const res = await fetch(url)
     const blob = await res.blob()
     const shareData = {
