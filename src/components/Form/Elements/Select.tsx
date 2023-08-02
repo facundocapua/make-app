@@ -1,4 +1,3 @@
-
 type Props<T = string> = {
   label: string
   value: T

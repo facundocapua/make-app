@@ -1,4 +1,3 @@
-
 type TextProps = {
   label: string
   placeholder?: string
@@ -16,8 +15,8 @@ export default function Text ({ label, placeholder, value, onChange, type = 'tex
           className="h-24 p-2 mx-2 mt-2 mb-4 text-sm rounded-lg outline-none resize-none focus:ring focus:ring-gray-400"
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder ?? label}
+          defaultValue={value}
         >
-          {value}
         </textarea>
       </>
     )

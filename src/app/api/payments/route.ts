@@ -1,24 +1,18 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiRequest, NextApiResponse } from 'next'
-import { getServerSession } from 'next-auth/next'
-import { authOptions } from '../auth/[...nextauth]'
 import type { UserSession } from '@/types/session'
 import type { PaymentType } from '@/types/payment'
 import { appendRow } from '@/services/google/sheets'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '../auth/[...nextauth]/route'
+import { NextResponse } from 'next/server'
 
-export default async function handler (
-  req: NextApiRequest,
-  res: NextApiResponse<PaymentType | any>
-) {
-  const { method } = req
-  if (method !== 'POST') {
-    return res.status(405).json({ message: 'Method Not Allowed' })
-  }
-
-  const data:PaymentType = req.body
-  const session = await getServerSession(req, res, authOptions) as UserSession
+const handler = async (
+  req: Request
+) => {
+  const data:PaymentType = await req.json()
+  const session = await getServerSession(authOptions) as UserSession
   if (!session) {
-    return res.status(401).json({ message: 'Unauthorized' })
+    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
   }
   const { accessToken } = session
   const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID ?? ''
@@ -36,7 +30,10 @@ export default async function handler (
   const { error } = result
   if (error) {
     const { code, message } = error
-    return res.status(code).json({ message })
+    return NextResponse.json({ message }, { status: code })
   }
-  res.status(200).json(result)
+
+  return NextResponse.json(result)
 }
+
+export { handler as POST }
