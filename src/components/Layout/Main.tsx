@@ -2,20 +2,15 @@
 
 import type { ReactNode } from 'react'
 import { useEffect } from 'react'
-import { useSession } from 'next-auth/react'
-import Login from '@/components/Form/Login'
 import MainMenu from '@/components/Menu/MainMenu'
 import AlertContainer from '@/components/Ui/AlertContainer'
 import Image from 'next/image'
 
 type MainProps = {
-  isPublic: boolean
   children: ReactNode
 }
 
-export default function Main ({ isPublic, children }: MainProps) {
-  const { data: session } = useSession()
-
+export default function Main ({ children }: MainProps) {
   useEffect(() => {
     const vh = window.innerHeight * 0.01
     document.documentElement.style.setProperty('--vh', `${vh}px`)

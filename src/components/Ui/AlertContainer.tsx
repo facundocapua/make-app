@@ -1,4 +1,3 @@
-
 import { useContext } from 'react'
 import type { AlertsContextType } from '@/context/alerts'
 import { AlertsContext } from '@/context/alerts'
