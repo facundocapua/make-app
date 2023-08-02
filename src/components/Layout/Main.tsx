@@ -1,3 +1,5 @@
+'use client'
+
 import type { ReactNode } from 'react'
 import { useEffect } from 'react'
 import { useSession } from 'next-auth/react'
@@ -29,14 +31,7 @@ export default function Main ({ isPublic, children }: MainProps) {
           </h1>
         </header>
         <main className='min-h-0 overflow-y-auto grow shrink basis-0'>
-          { session || isPublic
-            ? (
-              <>{children}</>
-            )
-            : (
-              <Login />
-            )
-          }
+          {children}
         </main>
         <footer>
           <MainMenu />

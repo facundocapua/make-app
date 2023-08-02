@@ -3,7 +3,6 @@ import NextAuth from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 import { refreshAccessToken, scopes } from '@/services/google/auth'
 import type { SessionCallbackProps } from '@/services/google/types'
-
 export const authOptions:NextAuthOptions = {
   // Configure one or more authentication providers
   providers: [
@@ -49,4 +48,6 @@ export const authOptions:NextAuthOptions = {
     }
   }
 }
-export default NextAuth(authOptions)
+const handler = NextAuth(authOptions)
+
+export { handler as GET, handler as POST }

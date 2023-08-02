@@ -1,27 +1,22 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { EventType } from '@/types/event'
-import { unstable_getServerSession as getServerSession } from 'next-auth/next'
-import { authOptions } from '../auth/[...nextauth]'
 import { CALENDAR_NAME, getCalendar } from '@/services/google'
 import { createEvent } from '@/services/google/events'
 import type { GoogleEventType } from '@/services/google/types'
 import { generateEventObject } from '@/utils/google'
 import type { UserSession } from '@/types/session'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '../auth/[...nextauth]/route'
+import { NextResponse } from 'next/server'
 
-export default async function handler (
-  req: NextApiRequest,
-  res: NextApiResponse<GoogleEventType | any>
-) {
-  const { method } = req
-  if (method !== 'POST') {
-    return res.status(405).json({ message: 'Method Not Allowed' })
-  }
+const handler = async (
+  req: Request
+) => {
+  const data:EventType = await req.json()
 
-  const data:EventType = req.body
-  const session = await getServerSession(req, res, authOptions) as UserSession
+  const session = await getServerSession(authOptions) as UserSession
   if (!session) {
-    return res.status(401).json({ message: 'Unauthorized' })
+    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
   }
   const { accessToken } = session
 
@@ -30,5 +25,7 @@ export default async function handler (
   const eventData = generateEventObject(data)
   const event = await createEvent({ calendarId: calendar.id, event: eventData, accessToken: String(accessToken) })
 
-  res.status(200).json(event)
+  return NextResponse.json(event)
 }
+
+export { handler as POST }

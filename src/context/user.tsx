@@ -11,7 +11,7 @@ export type UserContextType = {
 export const UserContext = React.createContext<UserContextType>({})
 
 export type UserProviderProps = {
-  accessToken: string,
+  accessToken?: string,
   calendarName: string,
   children: React.ReactNode,
 }
