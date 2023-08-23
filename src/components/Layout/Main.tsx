@@ -30,6 +30,9 @@ export default function Main ({ children }: MainProps) {
         </main>
         <footer>
           <MainMenu />
+          <div className='flex items-center justify-center w-full pb-2 text-xs text-white'>
+            <a href="https://makeapp.ar/privacy-policy" target='_blank' rel="external nofollow noopener noreferrer">Privacy Policy</a>
+          </div>
         </footer>
       </div>
     </div>
