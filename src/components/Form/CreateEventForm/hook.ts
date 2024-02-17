@@ -10,15 +10,15 @@ const ACTIONS_TYPES = {
   UPDATE_PRICE: 'update_price',
   UPDATE_DEPOSIT: 'update_deposit',
   UPDATE_NOTES: 'update_notes'
-}
+} as const
 
 type ActionType<T> = {
-  type: keyof typeof ACTIONS_TYPES,
+  type: typeof ACTIONS_TYPES[keyof typeof ACTIONS_TYPES],
   payload: T
 }
 
 const ACTIONS = {
-  [ACTIONS_TYPES.UPDATE_FULL_NAME]: (state: Omit<EventType, 'id'>, action: ActionType<EventType['id']>): Omit<EventType, 'id'> => {
+  [ACTIONS_TYPES.UPDATE_FULL_NAME]: (state: Omit<EventType, 'id'>, action: ActionType<EventType['fullName']>): Omit<EventType, 'id'> => {
     return { ...state, fullName: action.payload }
   },
   [ACTIONS_TYPES.UPDATE_DATE]: (state: Omit<EventType, 'id'>, action: ActionType<EventType['date']>): Omit<EventType, 'id'> => {
@@ -44,8 +44,9 @@ const ACTIONS = {
   }
 }
 
-const reducer = (state: Omit<EventType, 'id'>, action: any) => {
-  const actionToExecute = ACTIONS[action.type]
+
+const reducer = (state: any, action: ActionType<any>) => {
+  const actionToExecute = ACTIONS[action.type] as (state: Omit<EventType, 'id'>, action: ActionType<any>) => Omit<EventType, 'id'>
   return actionToExecute ? actionToExecute(state, action) : state
 }
 
@@ -67,8 +68,8 @@ export default function useForm (): UseFormResponse {
     includesTest: false,
     testDate: '',
     duration: 60,
-    price: parseInt(process.env.NEXT_PUBLIC_DEFAULT_PRICE ?? ''),
-    deposit: parseInt(process.env.NEXT_PUBLIC_DEFAULT_PRICE ?? '') / 2,
+    price: '',
+    deposit: '',
     notes: ''
   })
 
