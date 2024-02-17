@@ -81,9 +81,10 @@ export type GetEventsProps = {
   calendarId: string
   accessToken: string
   since?: Date
+  to?: Date
 }
 
-export const listEvents = ({ calendarId, accessToken, since }: GetEventsProps):Promise<Array<EventType>> => {
+export const listEvents = ({ calendarId, accessToken, since, to }: GetEventsProps):Promise<Array<EventType>> => {
   const params: {[key: string]: string} = {
     orderBy: 'startTime',
     singleEvents: 'true'
@@ -91,6 +92,10 @@ export const listEvents = ({ calendarId, accessToken, since }: GetEventsProps):P
 
   if (since) {
     params.timeMin = since.toISOString()
+  }
+
+  if (to) {
+    params.timeMax = to.toISOString()
   }
 
   return makeApiCall({

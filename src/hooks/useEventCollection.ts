@@ -17,9 +17,10 @@ type EventCollectionResponse = {
 
 type Props = {
   onlyFutureEvents?: boolean
+  newestFirst?: boolean
 }
 
-export default function useEventCollection ({ onlyFutureEvents }: Props = { onlyFutureEvents: false }): EventCollectionResponse {
+export default function useEventCollection ({ onlyFutureEvents, newestFirst }: Props = { onlyFutureEvents: false, newestFirst: true }): EventCollectionResponse {
   const [events, setEvents] = useState <Array<EventType>>()
   const [loading, setLoading] = useState <boolean>(true)
   const session = useSession().data as UserSession
@@ -30,14 +31,19 @@ export default function useEventCollection ({ onlyFutureEvents }: Props = { only
     const accessToken = session?.accessToken ?? ''
     if (calendarId !== '' && accessToken !== '') {
       const params: GetEventsProps = { calendarId, accessToken: String(accessToken) }
-      if (onlyFutureEvents) {
-        const today = new Date()
-        params.since = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+
+      const today = new Date()
+      params.since = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+      if (!onlyFutureEvents) {
+        // If we are not only looking for future events, we will look for events from the last year
+        params.since.setFullYear(today.getFullYear() - 1)
+        params.to = today
       }
 
       setLoading(true)
       listEvents(params).then((events: Array<EventType>) => {
-        setEvents(events)
+        const sortedEvents = newestFirst ? events : events.reverse()
+        setEvents(sortedEvents)
         setLoading(false)
       })
     }

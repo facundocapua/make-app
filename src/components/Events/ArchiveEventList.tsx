@@ -7,7 +7,7 @@ import Spinner from '../Ui/Spinner'
 import useGroupedEvents from './hooks/useGroupedEvents'
 
 export default function ArchiveEventList () {
-  const { data, loading, updateEvent, deleteEvent } = useGroupedEvents({ onlyFutureEvents: false })
+  const { data, loading, updateEvent, deleteEvent } = useGroupedEvents({ onlyFutureEvents: false, newestFirst: false })
   const [showModal, setShowModal] = useState(false)
   const [currentEvent, setCurrentEvent] = useState<EventType | null>(null)
 

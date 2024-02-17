@@ -26,9 +26,10 @@ export const formatDateComputer = (date: string) => {
 export const formatDate = (date: string) => {
   const dateObj = new Date(date)
   const options: Intl.DateTimeFormatOptions = {
-    day: 'numeric',
+    day: '2-digit',
     month: 'short',
-    weekday: 'long'
+    weekday: 'long',
+    year: 'numeric'
   }
 
   return dateObj.toLocaleDateString('es-AR', options)

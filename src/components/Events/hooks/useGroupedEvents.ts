@@ -12,11 +12,12 @@ type Response = {
 }
 
 type Props = {
-  onlyFutureEvents: boolean,
+  onlyFutureEvents: boolean
+  newestFirst?: boolean
 }
 
-export default function useGroupedEvents ({ onlyFutureEvents }: Props = { onlyFutureEvents: true }): Response {
-  const { data, loading, updateEvent, deleteEvent } = useEventCollection({ onlyFutureEvents })
+export default function useGroupedEvents ({ onlyFutureEvents, newestFirst = true }: Props = { onlyFutureEvents: true, newestFirst: true }): Response {
+  const { data, loading, updateEvent, deleteEvent } = useEventCollection({ onlyFutureEvents, newestFirst })
   const [groupedEvents, setGroupedEvents] = useState<Array<GroupedEventItemType>>()
   const [firstDate, setFirstDate] = useState<string>()
 

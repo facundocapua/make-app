@@ -44,7 +44,6 @@ const ACTIONS = {
   }
 }
 
-
 const reducer = (state: any, action: ActionType<any>) => {
   const actionToExecute = ACTIONS[action.type] as (state: Omit<EventType, 'id'>, action: ActionType<any>) => Omit<EventType, 'id'>
   return actionToExecute ? actionToExecute(state, action) : state
