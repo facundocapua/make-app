@@ -5,7 +5,7 @@ import { generateEventObject } from '@/utils/google'
 import type { UserSession } from '@/types/session'
 import { getServerSession } from 'next-auth'
 import { NextResponse } from 'next/server'
-import { authOptions } from '../../auth/[...nextauth]/route'
+import { authOptions } from '@/utils/auth-options'
 
 const handler = async (
   req: Request,

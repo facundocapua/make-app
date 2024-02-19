@@ -3,8 +3,8 @@ import type { UserSession } from '@/types/session'
 import type { PaymentType } from '@/types/payment'
 import { appendRow } from '@/services/google/sheets'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '../auth/[...nextauth]/route'
 import { NextResponse } from 'next/server'
+import { authOptions } from '@/utils/auth-options'
 
 const handler = async (
   req: Request

@@ -1,5 +1,6 @@
 import { ClockIcon } from '@/components/Icons'
 import type { EventType } from '@/types/event'
+import { EVENT_STATUS, getEventStatus } from '@/utils/events'
 import { formatTime, formatDisplayName } from '@/utils/format'
 import clsx from 'clsx'
 
@@ -11,41 +12,21 @@ const heightForDuration = {
   120: 'h-36'
 }
 
-const EVENT_STATUS = {
-  PENDING: 'peding',
-  PROCESSING: 'processing',
-  DONE: 'done'
-} as const
-
-const getStatus = (event: EventType): typeof EVENT_STATUS[keyof typeof EVENT_STATUS] => {
-  const { date, duration } = event
-  const today = new Date()
-  const eventDate = new Date(date)
-  if (eventDate < today) {
-    eventDate.setMinutes(eventDate.getMinutes() + duration)
-    const isNow = today < eventDate
-    if (isNow) return EVENT_STATUS.PROCESSING
-
-    return EVENT_STATUS.DONE
-  }
-  return EVENT_STATUS.PENDING
-}
-
 export default function EventItem ({ event }: { event: EventType }) {
   const { fullName, date, duration } = event
-  const status = getStatus(event)
+  const status = getEventStatus(event)
 
   return (
     <article className={clsx(
       'relative flex items-stretch mt-2 bg-gray-500 rounded-lg cursor-pointer drop-shadow-xs shadow-white-200 grow',
       heightForDuration[duration],
-      { 'opacity-50': status === EVENT_STATUS.DONE },
-      { 'animate-pulse': status === EVENT_STATUS.PROCESSING }
+      { 'opacity-50': status === EVENT_STATUS.DONE }
+      // { 'bg-sky-500': status === EVENT_STATUS.PROCESSING }
     )}>
       {status === EVENT_STATUS.PROCESSING
         ? (
-          <div className='absolute right-0 bg-fuchsia-800 py-0.5 px-2 rounded-lg'>
-            <span className='text-xs text-fuchsia-200'>Ahora</span>
+          <div className='absolute right-1 top-1 bg-slate-800 py-0.5 px-2 rounded-lg'>
+            <span className='text-xs text-slate-100'>Ahora</span>
           </div>
         )
         : null }

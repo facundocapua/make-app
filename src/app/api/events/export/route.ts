@@ -1,8 +1,8 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { CALENDAR_NAME, getCalendar, listEvents } from '@/services/google'
 import type { UserSession } from '@/types/session'
+import { authOptions } from '@/utils/auth-options'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '../../auth/[...nextauth]/route'
 import { NextResponse } from 'next/server'
 
 const handler = async () => {

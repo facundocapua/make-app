@@ -24,3 +24,23 @@ export const groupByDate = (events: Array<EventType>): Array<GroupedEventItemTyp
   })
   return response
 }
+
+export const EVENT_STATUS = {
+  PENDING: 'peding',
+  PROCESSING: 'processing',
+  DONE: 'done'
+} as const
+
+export const getEventStatus = (event: EventType): typeof EVENT_STATUS[keyof typeof EVENT_STATUS] => {
+  const { date, duration } = event
+  const today = new Date()
+  const eventDate = new Date(date)
+  if (eventDate < today) {
+    eventDate.setMinutes(eventDate.getMinutes() + duration)
+    const isNow = today < eventDate
+    if (isNow) return EVENT_STATUS.PROCESSING
+
+    return EVENT_STATUS.DONE
+  }
+  return EVENT_STATUS.PENDING
+}

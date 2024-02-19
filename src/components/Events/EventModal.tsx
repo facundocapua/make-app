@@ -1,10 +1,12 @@
 import type { EventType } from '@/types/event'
-import { CloseIcon, ShareIcon } from '../Icons'
+import { CloseIcon } from '../Icons'
 import DisplayNameInfo from './Fields/DisplayName'
 import EventTimeInfo from './EventTimeInfo'
 import PrinceInfo from './PrinceInfo'
 import NotesField from './Fields/NotesField'
-import { formatDateShort, formatTime } from '@/utils/format'
+import ShareDateButton from './event-modal/share-date-button'
+import { EVENT_STATUS, getEventStatus } from '@/utils/events'
+import RequestReviewButton from './event-modal/request-review-button'
 
 type Props = {
   event: EventType
@@ -13,6 +15,8 @@ type Props = {
 }
 export default function EventModal ({ event, onClose, onEdit }: Props) {
   const { fullName, date, duration, price, deposit, notes } = event
+  const status = getEventStatus(event)
+
   const handleNameChange = (fullName: string) => {
     onEdit({ ...event, fullName })
   }
@@ -29,43 +33,9 @@ export default function EventModal ({ event, onClose, onEdit }: Props) {
     onEdit({ ...event, notes: value })
   }
 
-  const handleShare = async () => {
-    const day = formatDateShort(date)
-    const time = formatTime(date)
-    const balance = Math.round(price - deposit)
-    const url = 'https://app.makeapp.ar/date.jpg'
-    const res = await fetch(url)
-    const blob = await res.blob()
-    const shareData = {
-      files: [
-        new File([blob],
-          'turno.jpg',
-          {
-            type: blob.type,
-            lastModified: new Date().getTime()
-          }
-        )
-      ],
+  // const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
-      title: 'Tu turno',
-      text: `Hola ${fullName}! 
-Tu turno es el 🗓️ *${day}* a las 🕐 *${time}*. 
-Tu saldo es 💰 *$${balance}*
-
-Te espero en mi estudio 🏠 Garibaldi 1082
-Se solicita puntualidad.
-
-Muchas gracias!
-`
-    }
-    if (navigator.canShare && navigator.canShare(shareData)) {
-      try {
-        await navigator.share(shareData)
-      } catch (err) {
-        console.log(err)
-      }
-    }
-  }
+  // }
 
   return (
     <>
@@ -84,8 +54,13 @@ Muchas gracias!
           <NotesField value={notes ?? ''} onChange={handleNotesChange} />
         </div>
 
+        {/* <div>
+          <input type="file" name="picture" accept="image/*" capture="environment" onChange={handleImageChange} />
+        </div> */}
+
         <div>
-          <button onClick={handleShare}><ShareIcon className='w-6 h-6 text-gray-300 opacity-70 hover:opacity-100' /></button>
+          {status !== EVENT_STATUS.DONE && <ShareDateButton event={event} />}
+          {status === EVENT_STATUS.DONE && <RequestReviewButton event={event} />}
         </div>
       </div>
     </>
