@@ -16,8 +16,13 @@ export default function DateField ({ date, onChange }: Props) {
   const { editing, setNewValue, handleShowInput, handleCancel, handleConfirm } = useEditInline({ value: formatDateComputer(date), onChange })
 
   useEffect(() => {
-    const newDate = new Date(`${onlyDate}T${onlyTime}`)
-    setNewValue(newDate.toISOString())
+    try {
+      const newDate = new Date(`${onlyDate}T${onlyTime}`)
+      setNewValue(newDate.toISOString())
+    } catch (e) {
+      console.log(`Problem with the date: ${onlyDate}T${onlyTime}`)
+      console.error(e)
+    }
   }, [onlyDate, onlyTime])
 
   if (!editing) {

@@ -19,8 +19,13 @@ export default function useDateTimeField ({ value, onChange }: Props): Return {
   const [onlyTime, setOnlyTime] = useState(formatTime(value))
 
   useEffect(() => {
-    const newDate = new Date(`${onlyDate}T${onlyTime}`)
-    onChange(newDate.toISOString())
+    try {
+      const newDate = new Date(`${onlyDate}T${onlyTime}`)
+      onChange(newDate.toISOString())
+    } catch (e) {
+      console.log(`Problem with the date: ${onlyDate}T${onlyTime}`)
+      console.error(e)
+    }
   }, [onlyDate, onlyTime])
 
   return { onlyDate, onlyTime, setOnlyDate, setOnlyTime }
