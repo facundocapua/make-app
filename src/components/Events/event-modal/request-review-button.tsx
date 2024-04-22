@@ -12,7 +12,7 @@ export default function RequestReviewButton ({ event }: Props) {
     const shareData = {
       title: '¿Cómo te fue?',
       text: `Hola ${fullName}!
-Espero haber cumplido con tus expectativas y que hayas brillado en el evento.
+Espero que te haya gustado tu maquillaje!
 Me encantaría recibir tus comentarios. 
 
 Ingresá al link y compartí tu experiencia.
