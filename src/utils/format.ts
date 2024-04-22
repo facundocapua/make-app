@@ -29,7 +29,8 @@ export const formatDate = (date: string) => {
     day: '2-digit',
     month: 'short',
     weekday: 'long',
-    year: 'numeric'
+    year: 'numeric',
+    hour12: false
   }
 
   return dateObj.toLocaleDateString('es-AR', options)
@@ -39,7 +40,8 @@ export const formatDateShort = (date: string) => {
   const dateObj = new Date(date)
   const options: Intl.DateTimeFormatOptions = {
     day: '2-digit',
-    month: '2-digit'
+    month: '2-digit',
+    hour12: false
   }
 
   return dateObj.toLocaleDateString('es-AR', options)
@@ -52,7 +54,8 @@ export const formatDateTime = (date: string) => {
     month: 'short',
     weekday: 'long',
     hour: '2-digit',
-    minute: '2-digit'
+    minute: '2-digit',
+    hour12: false
   }
 
   return dateObj.toLocaleDateString('es-AR', options)
@@ -66,7 +69,8 @@ export const formatTime = (date:string, round: boolean = true): string => {
   }
   const options: Intl.DateTimeFormatOptions = {
     hour: '2-digit',
-    minute: '2-digit'
+    minute: '2-digit',
+    hour12: false
   }
   return dateObj.toLocaleString('es-AR', options)
 }
