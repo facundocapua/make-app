@@ -33,7 +33,6 @@ Tu turno es el 🗓️ *${day}* a las 🕐 *${time}*.
 Tu saldo es 💰 *$${balance}*
 
 Te espero en mi estudio 🏠 Garibaldi 1082
-Se solicita puntualidad.
 
 Muchas gracias!
 `
