@@ -13,7 +13,7 @@ export default function ShareDateButton ({ event }: Props) {
     const day = formatDateShort(date)
     const time = formatTime(date)
     const balance = Math.round(price - deposit)
-    const url = 'https://app.makeapp.ar/date.jpg'
+    const url = 'https://app.makeapp.ar/date-new.jpg'
     const res = await fetch(url)
     const blob = await res.blob()
     const shareData = {
