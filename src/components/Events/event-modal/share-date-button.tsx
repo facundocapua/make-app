@@ -29,10 +29,8 @@ export default function ShareDateButton ({ event }: Props) {
 
       title: 'Tu turno',
       text: `Hola ${fullName}! 
-Tu turno es el 🗓️ *${day}* a las 🕐 *${time}*. 
-Tu saldo es 💰 *$${balance}*
-
-Te espero en mi estudio 🏠 Garibaldi 1082
+Tu cita es el 🗓️ *${day}* a las 🕐 *${time}*. 
+${balance > 0 ? `Te resta abonar 💰 *$${balance}*.` : 'Ya tienes el total abonado.'}
 
 Muchas gracias!
 `
