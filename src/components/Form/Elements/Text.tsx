@@ -1,4 +1,5 @@
 type TextProps = {
+  id: string
   label: string
   placeholder?: string
   value: string
@@ -6,12 +7,14 @@ type TextProps = {
   type?: 'text' | 'number' | 'textarea'
 }
 
-export default function Text ({ label, placeholder, value, onChange, type = 'text' }: TextProps) {
+export default function Text ({ id, label, placeholder, value, onChange, type = 'text' }: TextProps) {
   if (type === 'textarea') {
     return (
       <>
         <label className="px-2 text-sm text-gray-200">{label}</label>
         <textarea
+          id={id}
+          name={id}
           className="h-24 p-2 mx-2 mt-2 mb-4 text-sm rounded-lg outline-none resize-none focus:ring focus:ring-gray-400"
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder ?? label}
@@ -26,6 +29,8 @@ export default function Text ({ label, placeholder, value, onChange, type = 'tex
     <>
       <label className="px-2 text-sm text-gray-200">{label}</label>
       <input
+        id={id}
+        name={id}
         className="p-2 mx-2 mt-2 mb-4 rounded-lg outline-none focus:ring focus:ring-gray-400"
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder ?? label}

@@ -5,13 +5,13 @@ export const formatDisplayName = (name: string): string => {
 }
 
 export const formatPrice = (price: number) => {
-  const options = {
+  const arsFormat = new Intl.NumberFormat('es-AR', {
     style: 'currency',
     currency: 'ARS',
     minimumFractionDigits: 0
-  }
+  })
 
-  return price.toLocaleString('es-AR', options)
+  return arsFormat.format(price)
 }
 
 export const formatDateComputer = (date: string) => {

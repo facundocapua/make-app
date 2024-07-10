@@ -1,17 +1,12 @@
-import React, { useContext } from 'react'
+'use client'
+
+import React from 'react'
 import { Text, DateTimeField, Select } from '@/components/Form/Elements'
-import type { AlertsContextType } from '@/context/alerts'
-import { AlertsContext } from '@/context/alerts'
-import { AlertType } from '@/types/alerts'
-import { useRouter } from 'next/navigation'
 import useForm from './hook'
-import { saveEvent } from '@/services/api/saveEvent'
 import { durationOptions } from '@/utils/datetime'
+import { createEventAction } from './actions'
 
 export default function CreateEventForm () {
-  const { addAlert } = useContext(AlertsContext) as AlertsContextType
-  const router = useRouter()
-
   const {
     updateFullname,
     updateDate,
@@ -23,30 +18,18 @@ export default function CreateEventForm () {
   } = useForm()
   const { fullName, date, deposit, price, duration, notes } = state
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    saveEvent(state)
-      .then(res => {
-        console.log({ res })
-        addAlert({ type: AlertType.SUCCESS, message: 'Evento guardado con éxito' })
-        router.push('/')
-      }).catch(err => {
-        console.error(err)
-        addAlert({ type: AlertType.ERROR, message: 'Error al guardar el evento' })
-      })
-  }
-
   return (
-    <form onSubmit={handleSubmit} className='flex flex-col content-center justify-center p-2 mx-4 bg-gray-600 rounded-lg'>
+    <form action={createEventAction} className='flex flex-col content-center justify-center p-2 mx-4 bg-gray-600 rounded-lg'>
       <Text
+        id="fullName"
         label="Nombre"
         value={fullName}
         onChange={updateFullname}
       />
 
-      <DateTimeField label='Fecha' value={date} onChange={updateDate} />
+      <DateTimeField id='date' label='Fecha' value={date} onChange={updateDate} />
 
-      <Select label='Duración (minutos)' value={String(duration)} options={durationOptions} onChange={(value) => updateDuration(Number(value))} />
+      <Select id='duration' label='Duración (minutos)' value={String(duration)} options={durationOptions} onChange={(value) => updateDuration(Number(value))} />
 
       {/* <Toggle label="¿Incluye prueba?" checked={includesTest} onChange={updateIncludesTest} />
 
@@ -60,6 +43,7 @@ export default function CreateEventForm () {
       )} */}
 
       <Text
+        id='price'
         label="Precio"
         value={String(price)}
         onChange={updatePrice}
@@ -67,6 +51,7 @@ export default function CreateEventForm () {
       />
 
       <Text
+        id='deposit'
         label="Seña"
         value={String(deposit)}
         onChange={updateDeposit}
@@ -74,6 +59,7 @@ export default function CreateEventForm () {
       />
 
       <Text
+        id='notes'
         label="Notas"
         value={String(notes)}
         onChange={updateNotes}
