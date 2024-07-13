@@ -4,6 +4,8 @@ import type { EventType } from '@/types/event'
 export const generateEventObject = (data: EventType) => {
   const { fullName, date, duration } = data
   const startDate = new Date(date)
+  console.log('date', date)
+  console.log('startDate', startDate)
   const endDate = new Date(startDate)
   endDate.setMinutes(startDate.getMinutes() + duration)
 
