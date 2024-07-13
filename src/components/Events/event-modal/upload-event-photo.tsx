@@ -47,10 +47,7 @@ export default function UploadEventPhoto ({ event }: Props) {
       {
         event.picture
           ? (
-            // <a href={event.picture} className='h-[200px] w-full overflow-hidden block rounded-lg'>
-            //   <img className='object-cover rounded-lg' src={event.picture} alt={event.fullName} />
-            // </a>
-            <div className='h-[240px] w-full overflow-hidden rounded-lg border-2 border-gray-400 relative'>
+            <div className='h-[220px] w-full overflow-hidden rounded-lg border-2 border-gray-400 relative'>
               <img className='object-cover ' src={event.picture} alt={event.fullName} />
               <div className='absolute top-0 right-0 flex gap-2'>
                 <a href={event.picture} target='_blank' className='p-1' rel="noreferrer">
