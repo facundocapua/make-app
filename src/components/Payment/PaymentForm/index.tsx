@@ -43,9 +43,16 @@ export default function PaymentForm () {
 
       <DateField label='Fecha' value={date} onChange={updateDate} />
 
-      <Select label='Forma de pago' value={String(paymentMethod)} options={PAYMENT_METHODS} onChange={(value) => updatePaymentMethod(value as PaymentType['paymentMethod'])} />
+      <Select
+        id='paymentMethod'
+        label='Forma de pago'
+        value={String(paymentMethod)}
+        options={PAYMENT_METHODS}
+        onChange={(value) => updatePaymentMethod(value as PaymentType['paymentMethod'])}
+      />
 
       <Text
+        id='description'
         label="Description"
         value={String(description)}
         onChange={updateDescription}
@@ -53,13 +60,20 @@ export default function PaymentForm () {
       />
 
       <Text
+        id='amount'
         label="Monto"
         value={String(amount)}
         onChange={(value) => updateAmount(Number(value))}
         type='number'
       />
 
-      <Select label='Servicio' value={String(service)} options={SERVICES} onChange={(value) => updateService(value as PaymentType['service'])} />
+      <Select
+        id='service'
+        label='Servicio'
+        value={String(service)}
+        options={SERVICES}
+        onChange={(value) => updateService(value as PaymentType['service'])}
+      />
 
       <button type='submit' className='p-2 mx-2 text-gray-100 bg-gray-700 border-2 border-gray-400 rounded-xl hover:bg-gray-300 hover:text-gray-700'>Guardar</button>
     </form>

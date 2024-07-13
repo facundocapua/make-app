@@ -1,30 +1,78 @@
 'use client'
 
 import type { EventType } from '@/types/event'
-import { uploadEventPhotoAction } from './actions'
-import { useRef } from 'react'
+import { deletePictureAction, uploadPictureAction } from './actions'
+import { useCallback, useState } from 'react'
+import { useDropzone } from 'react-dropzone'
+import { DeleteIcon, EnlargeIcon } from '@/components/Icons'
+import Spinner from '@/components/Ui/Spinner'
 
 type Props = {
   event: EventType
 }
 
 export default function UploadEventPhoto ({ event }: Props) {
-  const formRef = useRef<HTMLFormElement>(null)
-  const uploadPhotoSubmit = uploadEventPhotoAction.bind(null, event)
+  const uploadPhotoSubmit = uploadPictureAction.bind(null, event)
+  const deletePhotoSubmit = deletePictureAction.bind(null, event)
+  const [isSaving, setIsSaving] = useState(false)
 
-  const handleChange = () => {
-    if (formRef.current) {
-      formRef.current.requestSubmit()
-    }
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    setIsSaving(true)
+    const formData = new FormData()
+    const file = acceptedFiles[0]
+    formData.append('file', file, file.name)
+    uploadPhotoSubmit(formData)
+      .then(() => setIsSaving(false))
+  }, [])
+
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    noDrag: true,
+    accept: { 'image/*': [] }
+  })
+
+  const handleDelete = () => {
+    setIsSaving(true)
+    deletePhotoSubmit()
+      .then(() => setIsSaving(false))
   }
 
   return (
-    <form ref={formRef} action={uploadPhotoSubmit}>
-      <input type='file' name="file" accept="image/*" onChange={handleChange} />
-      {event.picture &&
-        <a href={event.picture}>
-          <img className='max-h-[300px] object-cover' src={event.picture} alt={event.fullName} />
-        </a>
+    <form className='relative'>
+      {isSaving && (
+        <div className='absolute w-full h-full bg-black/40 rounded-lg z-10'>
+          <Spinner className='w-8 h-8 text-gray-500' />
+        </div>
+      )}
+      {
+        event.picture
+          ? (
+            // <a href={event.picture} className='h-[200px] w-full overflow-hidden block rounded-lg'>
+            //   <img className='object-cover rounded-lg' src={event.picture} alt={event.fullName} />
+            // </a>
+            <div className='h-[240px] w-full overflow-hidden rounded-lg border-2 border-gray-400 relative'>
+              <img className='object-cover ' src={event.picture} alt={event.fullName} />
+              <div className='absolute top-0 right-0 flex gap-2'>
+                <a href={event.picture} target='_blank' className='p-1' rel="noreferrer">
+                  <EnlargeIcon className='w-6 h-6 text-gray-800' />
+                </a>
+                <button type='button' onClick={handleDelete} className='p-1'>
+                  <DeleteIcon className='w-6 h-6 text-red-600' />
+                </button>
+              </div>
+            </div>
+          )
+          : (
+            <div {...getRootProps({ className: 'dropzone flex flex-col items-center justify-center pt-5 pb-6 border-2 border-gray-400 rounded-lg' })}>
+              <input name='file' {...getInputProps()} />
+              <svg className="w-8 h-8 mb-4 text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+              </svg>
+              <p className="mb-2 text-sm text-gray-400 ">
+                <span className="font-semibold">Subir imagen de referencia</span>
+              </p>
+            </div>
+          )
       }
     </form>
   )

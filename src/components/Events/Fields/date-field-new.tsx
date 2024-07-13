@@ -28,7 +28,7 @@ export default function DateField ({ date, onChange }: Props) {
   if (!editing) {
     return (
       <div className='flex items-center gap-2 text-gray-200' onClick={handleShowInput}>
-        <span className='p-1 w-[150px]'>{formatDateTime(date)}</span>
+        <span className='p-1 w-[180px]'>{formatDateTime(date)}</span>
         <EditIcon className='w-5 h-5 ml-1 text-gray-200' />
       </div>
     )

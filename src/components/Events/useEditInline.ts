@@ -26,6 +26,7 @@ export default function useEditInline<T=HTMLInputElement> ({ value, onChange }: 
     setTimeout(() => {
       const input = inputRef.current as HTMLInputElement | HTMLTextAreaElement
       input?.focus()
+      input?.setSelectionRange(input?.value.length, input?.value.length)
     }, 0)
   }
 

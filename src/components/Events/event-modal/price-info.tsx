@@ -1,5 +1,5 @@
 import { formatPrice } from '@/utils/format'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { EditIcon, CheckIcon } from '../../Icons'
 
 type Props = {
@@ -13,16 +13,32 @@ export default function PrinceInfo ({ price, deposit, onChange }: Props) {
   const [newPrice, setNewPrice] = useState(String(price))
   const [showDepositInput, setShowDepositInput] = useState(false)
   const [newDeposit, setNewDeposit] = useState(String(deposit))
+  const priceRef = useRef<HTMLInputElement>(null)
+  const depositRef = useRef<HTMLInputElement>(null)
+  const pending = price - deposit
+
+  const handleShowPrice = () => {
+    setShowPriceInput(true)
+    setTimeout(() => {
+      priceRef.current?.focus()
+    }, 0)
+  }
 
   const handlePriceConfirm = () => {
     const newPriceNumber = Number(newPrice)
     if (newPriceNumber !== price) onChange(newPriceNumber, deposit)
-
     setShowPriceInput(false)
   }
 
-  const handlePriceCancel = () => {
-    setShowPriceInput(false)
+  // const handlePriceCancel = () => {
+  //   setShowPriceInput(false)
+  // }
+
+  const handleShowDeposit = () => {
+    setShowDepositInput(true)
+    setTimeout(() => {
+      depositRef.current?.focus()
+    }, 0)
   }
 
   const handleDepositConfirm = () => {
@@ -32,9 +48,9 @@ export default function PrinceInfo ({ price, deposit, onChange }: Props) {
     setShowDepositInput(false)
   }
 
-  const handleDepositCancel = () => {
-    setShowDepositInput(false)
-  }
+  // const handleDepositCancel = () => {
+  //   setShowDepositInput(false)
+  // }
 
   return (
     <>
@@ -49,7 +65,8 @@ export default function PrinceInfo ({ price, deposit, onChange }: Props) {
                   onChange={(e) => setNewPrice(e.target.value)}
                   type='number'
                   value={newPrice}
-                  onBlur={handlePriceCancel}
+                  // onBlur={handlePriceCancel}
+                  ref={priceRef}
                 />
                 <button onClick={handlePriceConfirm}>
                   <CheckIcon className='w-5 h-5 ml-1 text-gray-200' />
@@ -57,13 +74,12 @@ export default function PrinceInfo ({ price, deposit, onChange }: Props) {
               </div>
             )
             : (
-              <div className='flex items-center gap-2 text-gray-200' onClick={() => setShowPriceInput(!showPriceInput)}>
+              <div className='flex items-center gap-2 text-gray-200' onClick={handleShowPrice}>
                 <span className='p-1 w-[150px]'>{formatPrice(price)}</span>
                 <EditIcon className='w-5 h-5 ml-1 text-gray-200' />
               </div>
             )
         }
-        {/* <small>(Restan: {formatPrice(price - deposit)})</small> */}
       </div>
       <div className='flex items-center justify-between'>
         <div className='font-medium text-gray-300'>Abonado</div>
@@ -72,11 +88,12 @@ export default function PrinceInfo ({ price, deposit, onChange }: Props) {
             ? (
               <div className='flex items-center gap-2'>
                 <input
-                  className="p-2 mx-2 text-gray-100 bg-gray-500 rounded-lg outline-none focus:ring focus:ring-gray-400"
+                  className="p-1 text-gray-100 bg-gray-500 rounded-lg outline-none w-[150px] focus:ring focus:ring-gray-400"
                   onChange={(e) => setNewDeposit(e.target.value)}
                   type='number'
                   value={newDeposit}
-                  onBlur={handleDepositCancel}
+                  // onBlur={handleDepositCancel}
+                  ref={depositRef}
                 />
                 <button onClick={handleDepositConfirm}>
                   <CheckIcon className='w-5 h-5 ml-1 text-gray-400' />
@@ -84,11 +101,19 @@ export default function PrinceInfo ({ price, deposit, onChange }: Props) {
               </div>
             )
             : (
-              <p className='flex items-center p-2' onClick={() => setShowDepositInput(!showDepositInput)}>
-                {formatPrice(deposit)}
-                <EditIcon className='w-5 h-5 ml-1 text-gray-400' />
-              </p>
+              <div className='flex items-center gap-2 text-gray-200' onClick={handleShowDeposit}>
+                <span className='p-1 w-[150px]'>{formatPrice(deposit)}</span>
+                <EditIcon className='w-5 h-5 ml-1 text-gray-200' />
+              </div>
             )
+        }
+      </div>
+      <div className='flex items-center justify-between'>
+        <div className='font-medium text-gray-300'>Estado de pago</div>
+        {
+          pending === 0
+            ? <div className='text-green-400'>Pagado</div>
+            : <div className='text-red-400'>Pendiente: {formatPrice(pending)}</div>
         }
       </div>
     </>

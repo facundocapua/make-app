@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers'
 import { Toaster } from 'sonner'
 import FlashToasterClient from './toaster-client'
+import { randomUUID } from 'crypto'
 
 export function FlashToaster () {
   const notification = cookies().get('notification')
@@ -13,5 +14,5 @@ export function FlashToaster () {
 }
 
 export function setNotification (notification: { type: 'success' | 'error'; message: string }) {
-  cookies().set('notification', JSON.stringify(notification), { path: '/', expires: new Date(Date.now() + 10 * 1000) })
+  cookies().set('notification', JSON.stringify({ ...notification, id: randomUUID() }), { path: '/', expires: new Date(Date.now() + 10 * 1000) })
 }
