@@ -1,7 +1,7 @@
 'use client'
 
 import type { EventType } from '@/types/event'
-import { formatDate } from '@/utils/format'
+import { formatDate, formatDateComputer } from '@/utils/format'
 import EventList from './EventList'
 
 type Props = {
@@ -14,7 +14,7 @@ export default function EventsGroupList ({ data }: Props) {
         const isOld = new Date(date) < new Date()
         return (
           <div key={date} id={`events-${date}`} className='mb-4'>
-            <h2 className={`text-xl font-bold text-gray-100 ${isOld ? 'opacity-60' : ''}`}>{formatDate(date)}</h2>
+            <h2 id={formatDateComputer(date)} className={`text-xl font-bold text-gray-100 ${isOld ? 'opacity-60' : ''}`}>{formatDate(date)}</h2>
             <EventList events={events} />
           </div>
         )

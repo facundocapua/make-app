@@ -13,6 +13,7 @@ import UploadEventPhoto from './event-modal/upload-event-photo'
 import Spinner from '../Ui/Spinner'
 import ShareDateButton from './event-modal/share-date-button'
 import RequestReviewButton from './event-modal/request-review-button'
+import { formatDateComputer } from '@/utils/format'
 
 type Props = {
   event: EventType
@@ -49,11 +50,12 @@ export default function EventModal ({ event }: Props) {
   }
 
   const handleClose = () => {
+    const dateAnchor = formatDateComputer(date)
     if (status === EVENT_STATUS.DONE) {
-      router.push('/archive')
+      router.push(`/archive#${dateAnchor}`)
       return
     }
-    router.push('/')
+    router.push(`/${dateAnchor}`)
   }
 
   return (
