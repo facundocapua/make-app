@@ -6,6 +6,12 @@ type Props = {
   event: EventType
 }
 
+const getBalanceText = (balance: number, price: number) => {
+  if (price === 0) return ''
+  if (balance > 0) return `Te resta abonar 💰 *$${balance}*.`
+  return 'Ya tienes el total abonado.'
+}
+
 export default function ShareDateButton ({ event }: Props) {
   const { fullName, date, price, deposit } = event
 
@@ -30,7 +36,7 @@ export default function ShareDateButton ({ event }: Props) {
       title: 'Tu turno',
       text: `Hola ${fullName}! 
 Tu cita es el 🗓️ *${day}* a las 🕐 *${time}*. 
-${balance > 0 ? `Te resta abonar 💰 *$${balance}*.` : 'Ya tienes el total abonado.'}
+${getBalanceText(balance, price)}
 
 Muchas gracias!
 `
