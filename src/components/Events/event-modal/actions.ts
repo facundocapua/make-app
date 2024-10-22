@@ -41,6 +41,50 @@ export const updateEventAction = async (event: EventType) => {
   redirect(`/event/${event.id}`)
 }
 
+export const getUploadClientDataAction = async () => {
+  const session = await getServerSession(authOptions) as UserSession
+  if (!session) {
+    throw new Error('Unauthorized')
+  }
+  const { accessToken } = session
+
+  await getCalendar({ name: CALENDAR_NAME, accessToken: String(accessToken) })
+
+  return {
+    region: 'auto',
+    signatureVersion: 'v4',
+    endpoint: `https://${process.env.CLOUDFLARE_R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+    accessKeyId: process.env.CLOUDFLARE_R2_ACCESS_KEY ?? '',
+    secretAccessKey: process.env.CLOUDFLARE_R2_SECRET_KEY ?? '',
+    bucket: process.env.CLOUDFLARE_R2_BUCKET_NAME ?? '',
+    publicUrl: process.env.CLOUDFLARE_R2_PUBLIC_URL ?? ''
+  }
+}
+
+export const updateEventPictureAction = async (event: EventType, picture: string) => {
+  const session = await getServerSession(authOptions) as UserSession
+  if (!session) {
+    throw new Error('Unauthorized')
+  }
+  const { accessToken } = session
+
+  const calendar = await getCalendar({ name: CALENDAR_NAME, accessToken: String(accessToken) })
+  const { id: calendarId } = calendar
+
+  try {
+    const newData = { ...event, picture }
+    const eventData = generateEventObject(newData)
+    await updateEvent({ calendarId, event: { id: event.id, ...eventData }, accessToken: String(accessToken) })
+
+    setNotification({ type: 'success', message: 'Imagen subida correctamente' })
+  } catch (e) {
+    setNotification({ type: 'error', message: 'Error al subir la imagen' })
+    console.log(e)
+  }
+
+  redirect(`/event/${event.id}`)
+}
+
 export const uploadPictureAction = async (event: EventType, data: FormData) => {
   const file: File | null = data.get('file') as unknown as File
 

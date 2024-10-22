@@ -1,28 +1,60 @@
 'use client'
 
 import type { EventType } from '@/types/event'
-import { deletePictureAction, uploadPictureAction } from './actions'
+import { deletePictureAction, getUploadClientDataAction, updateEventPictureAction } from './actions'
 import { useCallback, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { DeleteIcon, EnlargeIcon } from '@/components/Icons'
 import Spinner from '@/components/Ui/Spinner'
+import S3 from 'aws-sdk/clients/s3.js'
 
 type Props = {
   event: EventType
 }
 
+const uploadFile = async (bucketData: Record<string, string>, file: File) => {
+  const { bucket, publicUrl, ...clientData } = bucketData
+
+  const fileExt = file.name.split('.').pop()
+  const fileName = `${self.crypto.randomUUID()}.${fileExt}`
+
+  const client = new S3(clientData)
+
+  try {
+    const params = {
+      Bucket: bucket,
+      Key: fileName,
+      Body: file,
+      // ACL: 'public-read'
+      ContentType: file.type
+    }
+    await client.upload(
+      params, {
+        partSize: 50 * 1024 * 1024, queueSize: 1
+      }).promise()
+
+    return { url: `${publicUrl}/${fileName}` }
+  } catch (e) {
+    console.log(e)
+  }
+}
+
 export default function UploadEventPhoto ({ event }: Props) {
-  const uploadPhotoSubmit = uploadPictureAction.bind(null, event)
+  const uploadPhotoSubmit = updateEventPictureAction.bind(null, event)
   const deletePhotoSubmit = deletePictureAction.bind(null, event)
   const [isSaving, setIsSaving] = useState(false)
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     setIsSaving(true)
-    const formData = new FormData()
     const file = acceptedFiles[0]
-    formData.append('file', file, file.name)
-    uploadPhotoSubmit(formData)
-      .then(() => setIsSaving(false))
+    getUploadClientDataAction().then(clientData => {
+      uploadFile(clientData, file).then(data => {
+        if (!data) return
+        uploadPhotoSubmit(data.url).then(() => {
+          setIsSaving(false)
+        })
+      })
+    })
   }, [])
 
   const { getRootProps, getInputProps } = useDropzone({
