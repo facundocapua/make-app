@@ -38,6 +38,7 @@ export default function ShareDateButton ({ event }: Props) {
 Tu cita es el 🗓️ *${day}* a las 🕐 *${time}*. 
 ${getBalanceText(balance, price)}
 
+Confirmar assistencia. 
 Muchas gracias!
 `
     }
