@@ -3,11 +3,26 @@
 import type { EventType } from '@/types/event'
 import { formatDate, formatDateComputer } from '@/utils/format'
 import EventList from './EventList'
+import { useEffect } from 'react'
 
 type Props = {
   data: Array<{ date: string, events: Array<EventType> }>
 }
 export default function EventsGroupList ({ data }: Props) {
+  useEffect(() => {
+    // Check if we are in a client-side environment
+    if (typeof window !== 'undefined') {
+      // Access the anchor using window.location.hash
+      const anchor = window.location.hash
+      const date = anchor.replace('#', '')
+      document.getElementById(date)?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      })
+      console.log('Anchor:', anchor)
+    }
+  }, [])
+
   return (
     <section className='mx-4'>
       { data && data.map(({ date, events }: {date: string, events: Array<EventType>}) => {

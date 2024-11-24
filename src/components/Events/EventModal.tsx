@@ -55,7 +55,7 @@ export default function EventModal ({ event }: Props) {
       router.push(`/archive#${dateAnchor}`)
       return
     }
-    router.push(`/${dateAnchor}`)
+    router.push(`/#${dateAnchor}`)
   }
 
   return (
