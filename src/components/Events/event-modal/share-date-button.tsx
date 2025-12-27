@@ -21,8 +21,6 @@ export default function ShareDateButton ({ event }: Props) {
     const balance = Math.round(price - deposit)
     const url = 'https://app.makeapp.ar/date-new.jpg'
 
-    const IS_SAFARI_IOS = /iPhone|iPad|iPod/.test(navigator.userAgent) && /Safari/.test(navigator.userAgent)
-
     const text = `Hola ${fullName}! 
 Tu cita es el 🗓️ *${day}* a las 🕐 *${time}*. 
 ${getBalanceText(balance, price)}
@@ -48,17 +46,15 @@ Muchas gracias!
     }
     if (navigator.canShare && navigator.canShare(shareData)) {
       try {
-        if (IS_SAFARI_IOS) {
-          // Safari iOS requires text to be part of the URL
-          const { files: sharedFiles, ...restOfShareData } = shareData
-          await navigator.share({
-            files: sharedFiles
-          })
+        // Safari iOS requires text to be part of the URL
+        const { files: sharedFiles, ...restOfShareData } = shareData
+        await navigator.share({
+          files: sharedFiles
+        })
 
-          await navigator.share({ ...restOfShareData })
-          return
-        }
-        await navigator.share(shareData)
+        await navigator.share({ ...restOfShareData })
+
+        // await navigator.share(shareData)
       } catch (err) {
         console.log(err)
       }
