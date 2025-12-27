@@ -1,7 +1,7 @@
-import { PaperAirplaneIcon, ShareIcon } from '@/components/Icons'
+import { PaperAirplaneIcon } from '@/components/Icons'
 import type { EventType } from '@/types/event'
 import { formatDateShort, formatTime } from '@/utils/format'
-import { getBalanceText, getShareText } from './share-utils'
+import { getShareText } from './share-utils'
 
 type Props = {
   event: EventType
