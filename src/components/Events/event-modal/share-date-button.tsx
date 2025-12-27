@@ -28,23 +28,6 @@ ${getBalanceText(balance, price)}
 Confirmar assistencia. 
 Muchas gracias!
 `
-
-    const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform.startsWith('Mac') && navigator.maxTouchPoints > 1)
-
-    if (isIos) {
-      const shareData = {
-        title: 'Tu turno',
-        text,
-        url
-      }
-      try {
-        await navigator.share(shareData)
-      } catch (err) {
-        console.log(err)
-      }
-      return
-    }
-
     const res = await fetch(url)
     const blob = await res.blob()
     const shareData = {
