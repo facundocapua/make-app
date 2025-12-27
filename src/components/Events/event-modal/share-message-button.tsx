@@ -13,7 +13,7 @@ export default function ShareMessageButton ({ event }: Props) {
     const day = formatDateShort(date)
     const time = formatTime(date)
     const balance = Math.round(price - deposit)
-    
+
     const text = getShareText(fullName, day, time, balance, price)
     const shareData = {
       title: 'Tu turno',

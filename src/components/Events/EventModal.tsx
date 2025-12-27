@@ -82,7 +82,7 @@ export default function EventModal ({ event }: Props) {
           <UploadEventPhoto event={event} />
 
           <div>
-            {status !== EVENT_STATUS.DONE && 
+            {status !== EVENT_STATUS.DONE &&
               <div className='flex gap-4'>
                 <ShareDateButton event={event} />
                 <ShareMessageButton event={event} />
