@@ -12,7 +12,7 @@ const getBalanceText = (balance: number, price: number) => {
   return 'Ya tienes el total abonado.'
 }
 
-export default function ShareDateButton({ event }: Props) {
+export default function ShareDateButton ({ event }: Props) {
   const { fullName, date, price, deposit } = event
 
   const handleShare = async () => {
