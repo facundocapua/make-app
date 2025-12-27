@@ -46,15 +46,7 @@ Muchas gracias!
     }
     if (navigator.canShare && navigator.canShare(shareData)) {
       try {
-        // Safari iOS requires text to be part of the URL
-        const { files: sharedFiles, ...restOfShareData } = shareData
-        await navigator.share({
-          files: sharedFiles
-        })
-
-        await navigator.share({ ...restOfShareData })
-
-        // await navigator.share(shareData)
+        await navigator.share(shareData)
       } catch (err) {
         console.log(err)
       }
