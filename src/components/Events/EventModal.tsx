@@ -12,6 +12,7 @@ import { useState } from 'react'
 import UploadEventPhoto from './event-modal/upload-event-photo'
 import Spinner from '../Ui/Spinner'
 import ShareDateButton from './event-modal/share-date-button'
+import ShareMessageButton from './event-modal/share-message-button'
 import RequestReviewButton from './event-modal/request-review-button'
 import { formatDateComputer } from '@/utils/format'
 
@@ -81,7 +82,12 @@ export default function EventModal ({ event }: Props) {
           <UploadEventPhoto event={event} />
 
           <div>
-            {status !== EVENT_STATUS.DONE && <ShareDateButton event={event} />}
+            {status !== EVENT_STATUS.DONE && 
+              <div className='flex gap-4'>
+                <ShareDateButton event={event} />
+                <ShareMessageButton event={event} />
+              </div>
+            }
             {status === EVENT_STATUS.DONE && <RequestReviewButton event={event} />}
           </div>
         </div>
