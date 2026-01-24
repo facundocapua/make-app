@@ -8,7 +8,7 @@ type Props = {
 
 type Return<T = HTMLInputElement> = {
   editing: boolean
-  inputRef: RefObject<T>
+  inputRef: RefObject<T | null>
   newValue: string
   setNewValue: Dispatch<SetStateAction<string>>
   handleShowInput: () => void
