@@ -9,7 +9,7 @@ import { authOptions } from '@/utils/auth-options'
 
 const handler = async (
   req: Request,
-  { params }: { params: {id: EventType['id']} }
+  { params }: { params: Promise<{id: EventType['id']}> }
 ) => {
   const session = await getServerSession(authOptions) as UserSession
   if (!session) {
@@ -24,7 +24,7 @@ const handler = async (
     return NextResponse.json({ message: 'Calendar not found' }, { status: 404 })
   }
 
-  const { id } = params
+  const { id } = await params
 
   const { method } = req
   if (method === 'DELETE') {

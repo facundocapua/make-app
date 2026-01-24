@@ -67,7 +67,7 @@ type UseFormResponse = PaymentType & {
 }
 
 export default function useForm (): UseFormResponse {
-  const [state, dispatch] = useReducer<Reducer<PaymentType, any>>(reducer, defaultState)
+  const [state, dispatch] = useReducer(reducer, defaultState)
 
   return {
     ...state,
