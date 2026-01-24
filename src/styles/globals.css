@@ -1,8 +1,22 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
 
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
 
 @layer components {
   input[type=range] {
@@ -25,11 +39,15 @@
     @apply bg-red-100 rounded-full;
   }
 
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    color: black; /* Changes the icon color (works in Firefox) */
+    cursor: pointer;
+  }
 }
 
 @supports (-webkit-touch-callout: none) {
   .h-screen {
-    height: 100vh; /* Fallback for browsers that do not support Custom Properties */
+    height: 100dvh; /* Fallback for browsers that do not support Custom Properties */
     height: calc(var(--vh, 1vh) * 100);
   }
 

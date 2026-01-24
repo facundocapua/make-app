@@ -17,7 +17,7 @@ export default function DisplayNameInfo ({ name, onChange }: Props) {
         ? (
           <div className='flex items-center gap-2'>
             <input
-              className="p-1 text-gray-100 bg-gray-500 rounded-lg outline-none w-[150px] focus:ring focus:ring-gray-400"
+              className="p-1 text-gray-100 bg-gray-500 rounded-lg outline-hidden w-[150px] focus:ring-3 focus:ring-gray-400"
               onChange={(e) => setNewValue(e.target.value)}
               value={newValue}
               placeholder='Nombre'

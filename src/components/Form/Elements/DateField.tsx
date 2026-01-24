@@ -7,15 +7,15 @@ type Props = {
   onChange: (date: string) => void
 }
 
-export default function DateTimeField ({ label, value, onChange }: Props) {
+export default function DateTimeField({ label, value, onChange }: Props) {
   const { setOnlyDate, onlyDate } = useDateTimeField({ value, onChange })
 
   return (
     <>
       <label className="px-2 text-sm text-gray-200">{label}</label>
-      <div className='relative p-2 mx-2 mt-2 mb-4 bg-white rounded-lg w-50'>
+      <div className='relative p-2 mx-2 mt-2 mb-4 bg-white rounded-lg w-auto'>
         <input
-          className="outline-none w-28 "
+          className="outline-hidden w-28 "
           onChange={(e) => setOnlyDate(e.target.value)}
           value={onlyDate}
           type='date'

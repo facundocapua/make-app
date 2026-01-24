@@ -25,7 +25,7 @@ export default function NotesField ({ value, onChange }: Props) {
     <div className="flex items-center mb-2">
       <div className='relative w-full md:w-5/6' >
         <textarea
-          className="w-2/3 p-2 text-sm text-gray-100 bg-gray-500 rounded-lg outline-none resize-none focus:ring focus:ring-gray-400"
+          className="w-2/3 p-2 text-sm text-gray-100 bg-gray-500 rounded-lg outline-hidden resize-none focus:ring-3 focus:ring-gray-400"
           onChange={(e) => setNewValue(e.target.value)}
           value={newValue}
           placeholder='Notas'
@@ -33,10 +33,10 @@ export default function NotesField ({ value, onChange }: Props) {
 
         >
         </textarea>
-        <button className='absolute px-2 py-1 bg-gray-200 rounded right-12 bottom-1' onMouseDown={handleConfirm}>
+        <button className='absolute px-2 py-1 bg-gray-200 rounded-sm right-12 bottom-1' onMouseDown={handleConfirm}>
           <CheckIcon className='w-6 h-6 text-gray-400' />
         </button>
-        <button className='absolute px-2 py-1 bg-gray-400 rounded right-1 bottom-1' onClick={handleCancel}>
+        <button className='absolute px-2 py-1 bg-gray-400 rounded-sm right-1 bottom-1' onClick={handleCancel}>
           <CancelIcon className='w-6 h-6 text-gray-200' />
         </button>
       </div>

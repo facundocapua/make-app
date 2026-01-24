@@ -12,7 +12,7 @@ type Props = {
   }
 }
 
-export default async function EventPage ({ params }: Props) {
+export default async function EventPage({ params }: Props) {
   const session = await getServerSession(authOptions) as UserSession
   if (!session) {
     redirect('/api/auth/signin')
@@ -27,10 +27,10 @@ export default async function EventPage ({ params }: Props) {
       return (<div>No event</div>)
     }
 
-    const { id } = params
+    const { id } = await params
     const event = await getEvent({ calendarId, eventId: id, accessToken: String(accessToken) })
 
-    return (<EventsPageClient event={ event } />)
+    return (<EventsPageClient event={event} />)
   } catch (error) {
     return (<div>No event</div>)
   }

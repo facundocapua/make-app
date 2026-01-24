@@ -38,12 +38,12 @@ export default function DateField ({ date, onChange }: Props) {
     <div className='flex items-center gap-2'>
       <div className='p-1 bg-gray-500 rounded-lg w-[210px] text-gray-200'>
         <input
-          className="w-[120px] bg-gray-500 outline-none m-0 p-0 leading-none"
+          className="w-[120px] bg-gray-500 outline-hidden m-0 p-0 leading-none"
           onChange={(e) => setOnlyDate(e.target.value)}
           value={onlyDate}
           type='date'
         />
-        <select className='ml-1 bg-gray-500 p-0 outline-none' value={onlyTime} onChange={(e) => setOnlyTime(e.target.value)}>
+        <select className='ml-1 bg-gray-500 p-0 outline-hidden' value={onlyTime} onChange={(e) => setOnlyTime(e.target.value)}>
           { timeOptions.map((time) => (
             <option key={time} value={time}>{time}</option>
           )) }

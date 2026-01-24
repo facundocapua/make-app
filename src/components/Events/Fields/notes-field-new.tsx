@@ -31,7 +31,7 @@ export default function NotesField ({ value, onChange }: Props) {
         <div className='font-medium text-gray-300' onClick={handleCancel}>Notas</div>
         <div className='flex items-start justify-between'>
           <textarea
-            className="w-[300px] p-1 text-sm text-gray-100 bg-gray-500 rounded-lg outline-none resize-none focus:ring focus:ring-gray-400"
+            className="w-[300px] p-1 text-sm text-gray-100 bg-gray-500 rounded-lg outline-hidden resize-none focus:ring-3 focus:ring-gray-400"
             onChange={(e) => setNewValue(e.target.value)}
             value={newValue}
             placeholder='Notas'

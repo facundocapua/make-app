@@ -44,7 +44,7 @@ export default function Alert ({ type, message, onClose }: AlertProps) {
 
   return (
     <div className={`w-5/6 flex p-4 mb-4 rounded-lg ${styles.background} drop-shadow-md`} role={type}>
-      <InfoIcon className={`flex-shrink-0 w-5 h-5 ${styles.text}`} />
+      <InfoIcon className={`shrink-0 w-5 h-5 ${styles.text}`} />
       <span className="sr-only">Info</span>
       <div className={`ml-3 text-sm font-medium ${styles.text}`}>
         {message}

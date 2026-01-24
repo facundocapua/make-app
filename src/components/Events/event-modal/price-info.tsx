@@ -5,10 +5,10 @@ import { EditIcon, CheckIcon } from '../../Icons'
 type Props = {
   price: number
   deposit: number
-  onChange: (price:number, deposit: number) => void
+  onChange: (price: number, deposit: number) => void
 }
 
-export default function PrinceInfo ({ price, deposit, onChange }: Props) {
+export default function PrinceInfo({ price, deposit, onChange }: Props) {
   const [showPriceInput, setShowPriceInput] = useState(false)
   const [newPrice, setNewPrice] = useState(String(price))
   const [showDepositInput, setShowDepositInput] = useState(false)
@@ -61,7 +61,7 @@ export default function PrinceInfo ({ price, deposit, onChange }: Props) {
             ? (
               <div className='flex items-center gap-2'>
                 <input
-                  className="p-1 text-gray-100 bg-gray-500 rounded-lg outline-none w-[150px] focus:ring focus:ring-gray-400"
+                  className="p-1 text-gray-100 bg-gray-500 rounded-lg outline-hidden w-[150px] focus:ring-3 focus:ring-gray-400"
                   onChange={(e) => setNewPrice(e.target.value)}
                   type='number'
                   value={newPrice}
@@ -88,7 +88,7 @@ export default function PrinceInfo ({ price, deposit, onChange }: Props) {
             ? (
               <div className='flex items-center gap-2'>
                 <input
-                  className="p-1 text-gray-100 bg-gray-500 rounded-lg outline-none w-[150px] focus:ring focus:ring-gray-400"
+                  className="p-1 text-gray-100 bg-gray-500 rounded-lg outline-hidden w-[150px] focus:ring-3 focus:ring-gray-400"
                   onChange={(e) => setNewDeposit(e.target.value)}
                   type='number'
                   value={newDeposit}

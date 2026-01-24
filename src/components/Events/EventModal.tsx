@@ -8,7 +8,7 @@ import NotesField from './Fields/notes-field-new'
 import { EVENT_STATUS, getEventStatus } from '@/utils/events'
 import { updateEventAction } from './event-modal/actions'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useTransition } from 'react'
 import UploadEventPhoto from './event-modal/upload-event-photo'
 import Spinner from '../Ui/Spinner'
 import ShareDateButton from './event-modal/share-date-button'
@@ -19,35 +19,26 @@ import { formatDateComputer } from '@/utils/format'
 type Props = {
   event: EventType
 }
-export default function EventModal ({ event }: Props) {
+export default function EventModal({ event }: Props) {
   const { fullName, date, duration, price, deposit, notes } = event
-  const [isSaving, setIsSaving] = useState(false)
   const status = getEventStatus(event)
-
+  const [isSaving, startTransition] = useTransition()
   const router = useRouter()
 
   const handleNameChange = (fullName: string) => {
-    setIsSaving(true)
-    updateEventAction({ ...event, fullName })
-      .then(() => setIsSaving(false))
+    startTransition(() => updateEventAction({ ...event, fullName }))
   }
 
   const handleDateChange = (date: string) => {
-    setIsSaving(true)
-    updateEventAction({ ...event, date })
-      .then(() => setIsSaving(false))
+    startTransition(() => updateEventAction({ ...event, date }))
   }
 
   const handlePriceChange = (price: number, deposit: number) => {
-    setIsSaving(true)
-    updateEventAction({ ...event, price, deposit })
-      .then(() => setIsSaving(false))
+    startTransition(() => updateEventAction({ ...event, price, deposit }))
   }
 
   const handleNotesChange = (value: string) => {
-    setIsSaving(true)
-    updateEventAction({ ...event, notes: value })
-      .then(() => setIsSaving(false))
+    startTransition(() => updateEventAction({ ...event, notes: value }))
   }
 
   const handleClose = () => {

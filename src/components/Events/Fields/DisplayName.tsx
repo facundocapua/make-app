@@ -25,17 +25,17 @@ export default function DisplayNameInfo ({ name, onChange }: Props) {
     <div className="flex items-center mb-2">
       <div className='relative'>
         <input
-          className="p-2 text-gray-100 bg-gray-500 rounded-lg outline-none focus:ring focus:ring-gray-400"
+          className="p-2 text-gray-100 bg-gray-500 rounded-lg outline-hidden focus:ring-3 focus:ring-gray-400"
           onChange={(e) => setNewValue(e.target.value)}
           value={newValue}
           placeholder='Nombre'
           ref={inputRef}
           onBlur={handleCancel}
         />
-        <button className='absolute px-2 py-1 bg-gray-200 rounded right-12 bottom-1' onMouseDown={handleConfirm}>
+        <button className='absolute px-2 py-1 bg-gray-200 rounded-sm right-12 bottom-1' onMouseDown={handleConfirm}>
           <CheckIcon className='w-6 h-6 text-gray-400' />
         </button>
-        <button className='absolute px-2 py-1 bg-gray-400 rounded right-1 bottom-1' onClick={handleCancel}>
+        <button className='absolute px-2 py-1 bg-gray-400 rounded-sm right-1 bottom-1' onClick={handleCancel}>
           <CancelIcon className='w-6 h-6 text-gray-200' />
         </button>
       </div>

@@ -3,8 +3,9 @@ import { Toaster } from 'sonner'
 import FlashToasterClient from './toaster-client'
 import { randomUUID } from 'crypto'
 
-export function FlashToaster () {
-  const notification = cookies().get('notification')
+export async function FlashToaster() {
+  const cookieStore = await cookies()
+  const notification = cookieStore.get('notification')
   return (
     <>
       <Toaster />
@@ -13,6 +14,7 @@ export function FlashToaster () {
   )
 }
 
-export function setNotification (notification: { type: 'success' | 'error'; message: string }) {
-  cookies().set('notification', JSON.stringify({ ...notification, id: randomUUID() }), { path: '/', expires: new Date(Date.now() + 10 * 1000) })
+export async function setNotification(notification: { type: 'success' | 'error'; message: string }) {
+  const cookieStore = await cookies()
+  cookieStore.set('notification', JSON.stringify({ ...notification, id: randomUUID() }), { path: '/', expires: new Date(Date.now() + 10 * 1000) })
 }

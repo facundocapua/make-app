@@ -16,7 +16,7 @@ export default function Toggle ({ label, checked = false, onChange }: Props) {
           onChange={onChange}
           className={`${
             checked ? 'bg-rose-600' : 'bg-gray-200'
-          } relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2`}
+          } relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-hidden focus:ring-2 focus:ring-rose-500 focus:ring-offset-2`}
         >
           <span
             className={`${

@@ -38,21 +38,21 @@ export default function DateField ({ date, onChange }: Props) {
     <div className='relative flex items-center ml-2'>
       <div className='p-1 bg-gray-500 rounded-lg w-50 w-60'>
         <input
-          className="w-24 text-sm bg-gray-500 outline-none"
+          className="w-24 text-sm bg-gray-500 outline-hidden"
           onChange={(e) => setOnlyDate(e.target.value)}
           value={onlyDate}
           type='date'
         />
-        <select className='ml-1 text-sm bg-gray-500 outline-none' value={onlyTime} onChange={(e) => setOnlyTime(e.target.value)}>
+        <select className='ml-1 text-sm bg-gray-500 outline-hidden' value={onlyTime} onChange={(e) => setOnlyTime(e.target.value)}>
           { timeOptions.map((time) => (
             <option key={time} value={time}>{time}</option>
           )) }
         </select>
       </div>
-      <button className='absolute px-2 py-1 bg-gray-200 rounded right-10 bottom-1' onClick={handleConfirm}>
+      <button className='absolute px-2 py-1 bg-gray-200 rounded-sm right-10 bottom-1' onClick={handleConfirm}>
         <CheckIcon className='w-4 h-4 text-gray-400' />
       </button>
-      <button className='absolute px-2 py-1 bg-gray-400 rounded right-1 bottom-1' onClick={handleCancel}>
+      <button className='absolute px-2 py-1 bg-gray-400 rounded-sm right-1 bottom-1' onClick={handleCancel}>
         <CancelIcon className='w-4 h-4 text-gray-200' />
       </button>
     </div>

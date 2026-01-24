@@ -48,15 +48,15 @@ export default function PrinceInfo ({ price, deposit, onChange }: Props) {
             ? (
               <div className='relative'>
                 <input
-                  className="p-2 mx-2 text-gray-100 bg-gray-500 rounded-lg outline-none focus:ring focus:ring-gray-400"
+                  className="p-2 mx-2 text-gray-100 bg-gray-500 rounded-lg outline-hidden focus:ring-3 focus:ring-gray-400"
                   onChange={(e) => setNewPrice(e.target.value)}
                   type='number'
                   value={newPrice}
                 />
-                <button className='absolute px-2 py-1 bg-gray-200 rounded right-14 bottom-1' onClick={handlePriceConfirm}>
+                <button className='absolute px-2 py-1 bg-gray-200 rounded-sm right-14 bottom-1' onClick={handlePriceConfirm}>
                   <CheckIcon className='w-6 h-6 text-gray-400' />
                 </button>
-                <button className='absolute px-2 py-1 bg-gray-400 rounded right-3 bottom-1' onClick={handlePriceCancel}>
+                <button className='absolute px-2 py-1 bg-gray-400 rounded-sm right-3 bottom-1' onClick={handlePriceCancel}>
                   <CancelIcon className='w-6 h-6 text-gray-200' />
                 </button>
               </div>
@@ -77,15 +77,15 @@ export default function PrinceInfo ({ price, deposit, onChange }: Props) {
             ? (
               <div className='relative'>
                 <input
-                  className="p-2 mx-2 text-gray-100 bg-gray-500 rounded-lg outline-none focus:ring focus:ring-gray-400"
+                  className="p-2 mx-2 text-gray-100 bg-gray-500 rounded-lg outline-hidden focus:ring-3 focus:ring-gray-400"
                   onChange={(e) => setNewDeposit(e.target.value)}
                   type='number'
                   value={newDeposit}
                 />
-                <button className='absolute px-2 py-1 bg-gray-200 rounded right-14 bottom-1' onClick={handleDepositConfirm}>
+                <button className='absolute px-2 py-1 bg-gray-200 rounded-sm right-14 bottom-1' onClick={handleDepositConfirm}>
                   <CheckIcon className='w-6 h-6 text-gray-400' />
                 </button>
-                <button className='absolute px-2 py-1 bg-gray-400 rounded right-3 bottom-1' onClick={handleDepositCancel}>
+                <button className='absolute px-2 py-1 bg-gray-400 rounded-sm right-3 bottom-1' onClick={handleDepositCancel}>
                   <CancelIcon className='w-6 h-6 text-gray-200' />
                 </button>
               </div>
