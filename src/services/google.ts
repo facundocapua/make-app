@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto'
 import type { EventType } from '@/types/event'
 import type { GoogleEventType } from './google/types'
 import { parseGoogleEvent } from './google/parse-event'
@@ -57,13 +58,15 @@ export const makeApiCall = async (props: MakeApiCallProps):Promise<Response> => 
 }
 
 export const getCalendarByName = (name: string, accessToken: string):Promise<CalendarType> => {
+  const query = new URLSearchParams({ maxResults: '250', fields: 'items(id,summary,timeZone)' })
+
   return makeApiCall({
-    url: '/calendar/v3/users/me/calendarList',
+    url: `/calendar/v3/users/me/calendarList?${query}`,
     accessToken
   })
     .then(res => res.json())
     .then(res => {
-      return res.items.find((item: CalendarType) => item.summary === name)
+      return (res.items ?? []).find((item: CalendarType) => item.summary === name)
     })
 }
 
@@ -85,15 +88,28 @@ type GetCalendarProps = {
   accessToken: string,
 }
 
-export const getCalendar = ({ name, accessToken }: GetCalendarProps):Promise<CalendarType> => {
-  return getCalendarByName(name, accessToken)
-    .then(calendar => {
-      if (!calendar) {
-        return createCalendar(name, accessToken)
-      }
+// Nearly every request needs the calendar ID, which almost never changes. The cache lives in the memory
+// of each server instance, and it stores the promise so simultaneous requests can't create two calendars.
+const CALENDAR_CACHE_TTL_MS = 10 * 60 * 1000
+const calendarCache = new Map<string, { calendar: Promise<CalendarType>, expires: number }>()
 
-      return calendar
-    })
+export const getCalendar = ({ name, accessToken }: GetCalendarProps):Promise<CalendarType> => {
+  const now = Date.now()
+  calendarCache.forEach(({ expires }, key) => {
+    if (expires <= now) calendarCache.delete(key)
+  })
+
+  // Each user has a different token, and hashing it avoids keeping tokens around in memory
+  const key = `${name}:${createHash('sha256').update(accessToken).digest('hex')}`
+  const cached = calendarCache.get(key)
+  if (cached) return cached.calendar
+
+  const calendar = getCalendarByName(name, accessToken)
+    .then(found => found ?? createCalendar(name, accessToken))
+  calendarCache.set(key, { calendar, expires: now + CALENDAR_CACHE_TTL_MS })
+  calendar.catch(() => calendarCache.delete(key))
+
+  return calendar
 }
 
 export type GetEventsProps = {
