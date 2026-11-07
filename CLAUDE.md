@@ -10,7 +10,7 @@ The UI is in Spanish (es-AR), so keep new user-facing copy in Spanish.
 
 ## Commands
 
-Use **pnpm**. `pnpm-lock.yaml` is the maintained lockfile, even though the README says `npm install`. `package-lock.json` also exists and is only updated by Dependabot, so don't rely on it.
+Use **pnpm**. `pnpm-lock.yaml` is the only lockfile.
 
 ```bash
 pnpm dev             # next dev
