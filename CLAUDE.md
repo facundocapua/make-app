@@ -10,7 +10,7 @@ The UI is in Spanish (es-AR), so keep new user-facing copy in Spanish.
 
 ## Commands
 
-Use **pnpm**. `pnpm-lock.yaml` is the maintained lockfile and `node_modules` is pnpm-laid-out. `package-lock.json` is stale (it still pins Next 14), even though the README says `npm install`.
+Use **pnpm**. `pnpm-lock.yaml` is the maintained lockfile, even though the README says `npm install`. `package-lock.json` also exists and is only updated by Dependabot, so don't rely on it.
 
 ```bash
 pnpm dev             # next dev
