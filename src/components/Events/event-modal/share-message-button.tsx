@@ -1,7 +1,7 @@
 import { PaperAirplaneIcon } from '@/components/Icons'
 import type { EventType } from '@/types/event'
 import { formatDateShort, formatTime } from '@/utils/format'
-import { getShareText } from './share-utils'
+import { getShareText, shareContent } from './share-utils'
 
 type Props = {
   event: EventType
@@ -15,17 +15,7 @@ export default function ShareMessageButton ({ event }: Props) {
     const balance = Math.round(price - deposit)
 
     const text = getShareText(fullName, day, time, balance, price)
-    const shareData = {
-      title: 'Tu turno',
-      text
-    }
-    if (navigator.canShare && navigator.canShare(shareData)) {
-      try {
-        await navigator.share(shareData)
-      } catch (err) {
-        console.log(err)
-      }
-    }
+    await shareContent({ title: 'Tu turno', text })
   }
 
   return (

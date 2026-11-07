@@ -1,11 +1,26 @@
 import { ShareIcon } from '@/components/Icons'
 import type { EventType } from '@/types/event'
 import { formatDateShort, formatTime } from '@/utils/format'
-import { getShareText } from './share-utils'
+import { getShareText, shareContent } from './share-utils'
 
 type Props = {
   event: EventType
 }
+
+// The message is what matters, so it still goes out if the image can't be loaded
+const getShareImage = async () => {
+  try {
+    const res = await fetch('/date-new.jpg')
+    if (!res.ok) return null
+
+    const blob = await res.blob()
+    return new File([blob], 'turno.jpg', { type: blob.type, lastModified: Date.now() })
+  } catch (err) {
+    console.error(err)
+    return null
+  }
+}
+
 export default function ShareDateButton ({ event }: Props) {
   const { fullName, date, price, deposit } = event
 
@@ -13,32 +28,10 @@ export default function ShareDateButton ({ event }: Props) {
     const day = formatDateShort(date)
     const time = formatTime(date)
     const balance = Math.round(price - deposit)
-    const url = 'https://app.makeapp.ar/date-new.jpg'
-
     const text = getShareText(fullName, day, time, balance, price)
-    const res = await fetch(url)
-    const blob = await res.blob()
-    const shareData = {
-      files: [
-        new File([blob],
-          'turno.jpg',
-          {
-            type: blob.type,
-            lastModified: new Date().getTime()
-          }
-        )
-      ],
+    const image = await getShareImage()
 
-      title: 'Tu turno',
-      text
-    }
-    if (navigator.canShare && navigator.canShare(shareData)) {
-      try {
-        await navigator.share(shareData)
-      } catch (err) {
-        console.log(err)
-      }
-    }
+    await shareContent({ ...(image && { files: [image] }), title: 'Tu turno', text })
   }
 
   return (
