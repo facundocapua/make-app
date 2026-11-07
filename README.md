@@ -6,7 +6,7 @@ It uses Google Calendar API to create events and calculate income. It also uses 
 ## Installation
 
 ```bash
-npm install
+pnpm install
 ```
 
 
