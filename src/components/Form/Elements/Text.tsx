@@ -5,9 +5,11 @@ type TextProps = {
   value: string
   onChange: (value: string) => void
   type?: 'text' | 'number' | 'textarea'
+  required?: boolean
+  min?: number
 }
 
-export default function Text({ id, label, placeholder, value, onChange, type = 'text' }: TextProps) {
+export default function Text({ id, label, placeholder, value, onChange, type = 'text', required, min }: TextProps) {
   if (type === 'textarea') {
     return (
       <>
@@ -36,6 +38,8 @@ export default function Text({ id, label, placeholder, value, onChange, type = '
         placeholder={placeholder ?? label}
         type={type}
         value={value}
+        required={required}
+        min={min}
       />
     </>
   )

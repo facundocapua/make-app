@@ -6,6 +6,7 @@ import type { GetEventsProps } from '@/services/google'
 import { CALENDAR_NAME, getCalendar, listEvents } from '@/services/google'
 import EventsGroupList from '@/components/Events/events-group-list'
 import { groupByDate } from '@/utils/events'
+import { handlePageError } from '@/utils/page-errors'
 
 export default async function HomePage () {
   const session = await getServerSession(authOptions) as UserSession
@@ -15,11 +16,7 @@ export default async function HomePage () {
   const { accessToken } = session
 
   try {
-    const calendar = await getCalendar({ name: CALENDAR_NAME, accessToken: String(accessToken) })
-    const calendarId = calendar.id
-    if (calendarId === '' || accessToken === '') {
-      return (<div>No events</div>)
-    }
+    const { id: calendarId } = await getCalendar({ name: CALENDAR_NAME, accessToken: String(accessToken) })
 
     const params: GetEventsProps = { calendarId, accessToken: String(accessToken) }
 
@@ -31,6 +28,6 @@ export default async function HomePage () {
 
     return (<EventsGroupList data={groupedEvents} />)
   } catch (error) {
-    return (<div>No events</div>)
+    handlePageError(error)
   }
 }

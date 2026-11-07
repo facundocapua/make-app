@@ -43,17 +43,17 @@ Most of its output is `Definition for rule '@typescript-eslint/indent' was not f
 
 - NextAuth with the Google provider, configured in [src/utils/auth-options.ts](src/utils/auth-options.ts); scopes are in [src/services/google/auth.ts](src/services/google/auth.ts). Every Google call runs on behalf of the signed-in user with `session.accessToken`; there is no service account.
 - There is no middleware. Each page or route checks the session itself and redirects to `/api/auth/signin` or returns 401, so new pages and routes must do the same. The `signIn` callback only lets accounts in `ALLOWED_EMAILS` sign in; it doesn't end existing sessions, so removing an account also requires rotating `NEXTAUTH_SECRET`.
-- On token expiry the `jwt` callback calls `refreshAccessToken`. On `RefreshAccessTokenError`, [UserContextProvider](src/context/user.tsx) calls `signOut()`. `access_type: 'offline'` is commented out, so Google normally won't issue a refresh token and users get signed out when the access token expires.
-- Google REST calls go through `makeApiCall` in [src/services/google.ts](src/services/google.ts), which picks the `calendar` or `sheets` base URL from its `service` param. Extend it rather than hand-rolling fetches.
+- On token expiry the `jwt` callback calls `refreshAccessToken`. On `RefreshAccessTokenError`, [UserContextProvider](src/context/user.tsx) calls `signOut()`. Sign-in requests offline access with `prompt: 'consent'` so Google issues a refresh token; sessions without one are signed out when the access token expires.
+- Google REST calls go through `makeApiCall` in [src/services/google.ts](src/services/google.ts), which picks the `calendar` or `sheets` base URL from its `service` param and throws `GoogleApiError` on any non-2xx response. Extend it rather than hand-rolling fetches. Server pages pass errors to `handlePageError` ([src/utils/page-errors.ts](src/utils/page-errors.ts)), which redirects on 401, shows the 404 page on 404/410, and otherwise lets [error.tsx](src/app/error.tsx) handle them.
 
 ### Calendar as the data store
 
-The appointment record is JSON-serialized into the **`description`** field of a Calendar event: written by `generateEventObject` ([src/utils/google.ts](src/utils/google.ts)), read back with `JSON.parse(description)` in `listEvents` ([src/services/google.ts](src/services/google.ts)) and `getEvent` ([src/services/google/events.ts](src/services/google/events.ts)).
+The appointment record is JSON-serialized into the **`description`** field of a Calendar event: written by `generateEventObject` ([src/utils/google.ts](src/utils/google.ts)), read back by `parseGoogleEvent` ([src/services/google/parse-event.ts](src/services/google/parse-event.ts)). Events without a valid JSON description, such as ones added by hand in Google Calendar, are built from their Calendar fields instead.
 
 When changing event code:
 - A new [`EventType`](src/types/event.d.ts) field needs no schema change, but older events won't have it, so reads must tolerate its absence.
 - `createEventAction` builds its record field by field from `FormData` and doesn't set `includesTest` or `testDate`, so a new field must be added there explicitly. Update paths spread the existing event instead.
-- `JSON.parse` is unguarded: one event with a missing or non-JSON description (such as one added by hand in Google Calendar) makes `listEvents` throw and breaks the whole list page.
+- `listEvents` follows `nextPageToken` and limits the response with `fields`, so a new Calendar field must also be added to that list.
 - `getCalendar` finds or creates the calendar named by `CALENDAR_NAME` (`'MakeApp Calendar'`) and is called from nearly every server entrypoint to resolve the `calendarId`.
 
 ### Income ledger (Google Sheets)
@@ -70,7 +70,7 @@ Things that are easy to break in the signing call: the SDK leaves `content-type`
 
 App Router under [src/app/](src/app/). `page.tsx` is usually a server component that resolves the session and calendar and fetches data, with a sibling `client.tsx` for interactive parts.
 
-Mutations use **server actions** ([event-modal/actions.ts](src/components/Events/event-modal/actions.ts), [CreateEventForm/actions.ts](src/components/Form/CreateEventForm/actions.ts)), which `redirect()` on success. Flash messages cross the redirect through a short-lived `notification` cookie set by `setNotification` ([toaster.tsx](src/components/toaster/toaster.tsx)) and rendered with `sonner`. The payment form is the exception: it uses `fetch` to `/api/payments` and the alerts context.
+Mutations use **server actions** ([event-modal/actions.ts](src/components/Events/event-modal/actions.ts), [CreateEventForm/actions.ts](src/components/Form/CreateEventForm/actions.ts)), which `redirect()` after saving, except `deleteItem`, which returns `{ ok }` so the list can stay on the current page. Flash messages cross the redirect through a short-lived `notification` cookie set by `setNotification` ([toaster.tsx](src/components/toaster/toaster.tsx)) and rendered with `sonner`. The payment form is the exception: it uses `fetch` to `/api/payments` and the alerts context.
 
 ### Code with no callers in `src`
 

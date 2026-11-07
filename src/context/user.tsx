@@ -24,7 +24,7 @@ const UserProvider: React.FC<UserProviderProps> = ({ calendarName, children }) =
   useEffect(() => {
     const accessToken = session?.accessToken as string
     if (accessToken) {
-      getCalendar({ accessToken, name: calendarName }).then(setCalendar)
+      getCalendar({ accessToken, name: calendarName }).then(setCalendar).catch(console.error)
     }
   }, [session?.accessToken, calendarName])
 

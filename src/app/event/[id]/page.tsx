@@ -5,11 +5,12 @@ import { CALENDAR_NAME, getCalendar } from '@/services/google'
 import { authOptions } from '@/utils/auth-options'
 import type { UserSession } from '@/types/session'
 import { getEvent } from '@/services/google/events'
+import { handlePageError } from '@/utils/page-errors'
 
 type Props = {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default async function EventPage({ params }: Props) {
@@ -20,18 +21,13 @@ export default async function EventPage({ params }: Props) {
   const { accessToken } = session
 
   try {
-    const calendar = await getCalendar({ name: CALENDAR_NAME, accessToken: String(accessToken) })
-    const { id: calendarId } = calendar
-
-    if (!calendar) {
-      return (<div>No event</div>)
-    }
+    const { id: calendarId } = await getCalendar({ name: CALENDAR_NAME, accessToken: String(accessToken) })
 
     const { id } = await params
     const event = await getEvent({ calendarId, eventId: id, accessToken: String(accessToken) })
 
     return (<EventsPageClient event={event} />)
   } catch (error) {
-    return (<div>No event</div>)
+    handlePageError(error)
   }
 }

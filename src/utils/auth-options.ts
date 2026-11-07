@@ -17,9 +17,10 @@ export const authOptions:NextAuthOptions = {
       clientSecret: String(process.env.GOOGLE_CLIENT_SECRET),
       authorization: {
         params: {
-          // prompt: 'consent',
-          // access_type: 'offline',
-          // response_type: 'code',
+          // Google only issues a refresh token with offline access and explicit consent
+          prompt: 'consent',
+          access_type: 'offline',
+          response_type: 'code',
           scope: scopes.join(' ')
         }
       }

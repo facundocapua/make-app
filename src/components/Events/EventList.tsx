@@ -12,12 +12,13 @@ import 'react-swipeable-list/dist/styles.css'
 import type { EventType } from '@/types/event'
 import DeleteIcon from '../Icons/DeleteIcon'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 import { deleteItem } from './event-modal/actions'
+import { formatDisplayName } from '@/utils/format'
 
 const trailingActions = ({ event, onItemDelete }: {event: EventType, onItemDelete: (event: EventType) => void}) => (
   <TrailingActions>
     <SwipeAction
-      destructive={true}
       onClick={() => onItemDelete(event)}
     >
       <button className='flex items-center justify-center w-12 pr-3 mt-2 text-center text-white bg-red-500 rounded-lg'>
@@ -38,7 +39,16 @@ export default function EventList ({ events }: Props) {
   }
 
   const handleItemDelete = async (event: EventType) => {
-    await deleteItem(event.id)
+    if (!window.confirm(`¿Eliminar el turno de ${formatDisplayName(event.fullName)}? No se puede deshacer.`)) return
+
+    const { ok } = await deleteItem(event.id).catch(() => ({ ok: false }))
+    if (!ok) {
+      toast.error('No se pudo eliminar el turno', { position: 'top-center' })
+      return
+    }
+
+    toast.success('Turno eliminado', { position: 'top-center' })
+    router.refresh()
   }
 
   if (!events || !events.length) {

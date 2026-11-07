@@ -1,12 +1,21 @@
 'use client'
 
-import React from 'react'
+import React, { useActionState, useEffect } from 'react'
+import { toast } from 'sonner'
 import { Text, DateTimeField, Select } from '@/components/Form/Elements'
 import useForm from './hook'
 import { durationOptions } from '@/utils/datetime'
 import { createEventAction } from './actions'
 
 export default function CreateEventForm () {
+  const [actionState, formAction, isPending] = useActionState(createEventAction, null)
+
+  useEffect(() => {
+    if (actionState?.error) {
+      toast.error(actionState.error, { position: 'top-center' })
+    }
+  }, [actionState])
+
   const {
     updateFullname,
     updateDate,
@@ -19,12 +28,13 @@ export default function CreateEventForm () {
   const { fullName, date, deposit, price, duration, notes } = state
 
   return (
-    <form action={createEventAction} className='flex flex-col content-center justify-center p-2 mx-4 bg-gray-600 rounded-lg'>
+    <form action={formAction} className='flex flex-col content-center justify-center p-2 mx-4 bg-gray-600 rounded-lg'>
       <Text
         id="fullName"
         label="Nombre"
         value={fullName}
         onChange={updateFullname}
+        required
       />
 
       <DateTimeField id='date' label='Fecha' value={date} onChange={updateDate} />
@@ -48,6 +58,7 @@ export default function CreateEventForm () {
         value={String(price)}
         onChange={updatePrice}
         type='number'
+        min={0}
       />
 
       <Text
@@ -56,6 +67,7 @@ export default function CreateEventForm () {
         value={String(deposit)}
         onChange={updateDeposit}
         type='number'
+        min={0}
       />
 
       <Text
@@ -66,7 +78,9 @@ export default function CreateEventForm () {
         type='textarea'
       />
 
-      <button type='submit' className='p-2 mx-2 text-gray-100 bg-gray-700 border-2 border-gray-400 rounded-xl hover:bg-gray-300 hover:text-gray-700'>Guardar</button>
+      <button type='submit' disabled={isPending} className='p-2 mx-2 text-gray-100 bg-gray-700 border-2 border-gray-400 rounded-xl hover:bg-gray-300 hover:text-gray-700 disabled:opacity-50 disabled:pointer-events-none'>
+        {isPending ? 'Guardando...' : 'Guardar'}
+      </button>
     </form>
   )
 }
