@@ -59,9 +59,17 @@ export const formatDateTime = (date: string) => {
   return dateObj.toLocaleDateString('es-AR', options)
 }
 
+// Rounding down near midnight keeps the time on its own day, because forms combine it with the day of the
+// original date: 23:55 rounded up would become 00:00 of that same day, almost 24 hours earlier
+const roundTime = (time: number) => {
+  const rounded = Math.round(time / ROUND_TIME_MS) * ROUND_TIME_MS
+  const staysOnSameDay = getZonedDay(new Date(rounded)) === getZonedDay(new Date(time))
+  return staysOnSameDay ? rounded : rounded - ROUND_TIME_MS
+}
+
 export const formatTime = (date:string, round: boolean = true): string => {
   const time = new Date(date).getTime()
-  const dateObj = new Date(round ? Math.round(time / ROUND_TIME_MS) * ROUND_TIME_MS : time)
+  const dateObj = new Date(round ? roundTime(time) : time)
   const options: Intl.DateTimeFormatOptions = {
     timeZone: APP_TIME_ZONE,
     hour: '2-digit',
