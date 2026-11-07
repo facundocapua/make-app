@@ -9,7 +9,7 @@ type TextProps = {
   min?: number
 }
 
-export default function Text({ id, label, placeholder, value, onChange, type = 'text', required, min }: TextProps) {
+export default function Text ({ id, label, placeholder, value, onChange, type = 'text', required, min }: TextProps) {
   if (type === 'textarea') {
     return (
       <>

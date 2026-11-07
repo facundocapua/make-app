@@ -8,7 +8,7 @@ type Props = {
   onChange: (price: number, deposit: number) => void
 }
 
-export default function PrinceInfo({ price, deposit, onChange }: Props) {
+export default function PrinceInfo ({ price, deposit, onChange }: Props) {
   const [showPriceInput, setShowPriceInput] = useState(false)
   const [newPrice, setNewPrice] = useState(String(price))
   const [showDepositInput, setShowDepositInput] = useState(false)

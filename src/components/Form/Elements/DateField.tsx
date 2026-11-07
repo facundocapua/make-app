@@ -7,7 +7,7 @@ type Props = {
   onChange: (date: string) => void
 }
 
-export default function DateTimeField({ label, value, onChange }: Props) {
+export default function DateTimeField ({ label, value, onChange }: Props) {
   const { setOnlyDate, onlyDate } = useDateTimeField({ value, onChange })
 
   return (

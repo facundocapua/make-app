@@ -6,7 +6,7 @@ type Props<T = string> = {
   onChange: (value: T) => void
 }
 
-export default function Text({ id, label, options, value, onChange }: Props) {
+export default function Text ({ id, label, options, value, onChange }: Props) {
   return (
     <>
       <label className="px-2 text-sm text-gray-200">{label}</label>
