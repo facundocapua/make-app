@@ -1,5 +1,7 @@
 import type { EventType } from '@/types/event'
 import type { GoogleEventType } from './google/types'
+import { parseGoogleEvent } from './google/parse-event'
+
 export const CALENDAR_NAME: string = 'MakeApp Calendar'
 export const CALENDAR_DEFAULT_TIMEZONE: string = 'America/Argentina/Buenos_Aires'
 
@@ -22,19 +24,35 @@ type MakeApiCallProps = {
   data?: any,
 }
 
-export const makeApiCall = (props: MakeApiCallProps):Promise<Response> => {
+export class GoogleApiError extends Error {
+  status: number
+
+  constructor (status: number, message: string) {
+    super(message)
+    this.name = 'GoogleApiError'
+    this.status = status
+  }
+}
+
+export const makeApiCall = async (props: MakeApiCallProps):Promise<Response> => {
   const { url, accessToken, method = 'GET', data, service = 'calendar' } = props
   const apiUrl = apiUrlsByService[service]
 
-  return fetch(`${apiUrl}${url}`, {
+  const response = await fetch(`${apiUrl}${url}`, {
     method,
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${accessToken}`
     },
     body: data ? JSON.stringify(data) : undefined
+  })
+
+  if (!response.ok) {
+    const body = await response.json().catch(() => null)
+    throw new GoogleApiError(response.status, body?.error?.message ?? response.statusText)
   }
-  )
+
+  return response
 }
 
 export const getCalendarByName = (name: string, accessToken: string):Promise<CalendarType> => {
@@ -84,10 +102,17 @@ export type GetEventsProps = {
   to?: Date
 }
 
-export const listEvents = ({ calendarId, accessToken, since, to }: GetEventsProps):Promise<Array<EventType>> => {
+type EventsPage = {
+  items?: Array<GoogleEventType>,
+  nextPageToken?: string
+}
+
+export const listEvents = async ({ calendarId, accessToken, since, to }: GetEventsProps):Promise<Array<EventType>> => {
   const params: {[key: string]: string} = {
     orderBy: 'startTime',
-    singleEvents: 'true'
+    singleEvents: 'true',
+    maxResults: '2500',
+    fields: 'nextPageToken,items(id,summary,description,start,end)'
   }
 
   if (since) {
@@ -98,19 +123,20 @@ export const listEvents = ({ calendarId, accessToken, since, to }: GetEventsProp
     params.timeMax = to.toISOString()
   }
 
-  return makeApiCall({
-    url: `/calendar/v3/calendars/${calendarId}/events?${new URLSearchParams(params)}`,
-    accessToken
-  })
-    .then(res => res.json())
-    .then(res => {
-      return res.items.map((item: GoogleEventType): EventType => {
-        const { id, description } = item
-        const data = JSON.parse(description)
-        return {
-          id,
-          ...data
-        }
-      })
+  const events: Array<EventType> = []
+  let pageToken: string | undefined
+
+  do {
+    const query = new URLSearchParams(pageToken ? { ...params, pageToken } : params)
+    const response = await makeApiCall({
+      url: `/calendar/v3/calendars/${calendarId}/events?${query}`,
+      accessToken
     })
+    const page: EventsPage = await response.json()
+
+    events.push(...(page.items ?? []).map(parseGoogleEvent))
+    pageToken = page.nextPageToken
+  } while (pageToken)
+
+  return events
 }

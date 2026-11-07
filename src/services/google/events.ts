@@ -1,5 +1,6 @@
 import type { GoogleEventType } from './types'
 import { makeApiCall } from '../google'
+import { parseGoogleEvent } from './parse-event'
 import type { EventType } from '@/types/event'
 
 export type CreateUpdateEventProps = {
@@ -34,14 +35,7 @@ export const getEvent = ({ calendarId, eventId, accessToken }: GetUpdateEventPro
     method: 'GET'
   })
     .then(res => res.json())
-    .then(res => {
-      const { id, description } = res
-      const data = JSON.parse(description)
-      return {
-        id,
-        ...data
-      }
-    })
+    .then(parseGoogleEvent)
 }
 
 export type DeleteEventProps = {
@@ -56,12 +50,7 @@ export const deleteEvent = ({ calendarId, eventId, accessToken }: DeleteEventPro
     accessToken,
     method: 'DELETE'
   })
-    .then(() => {
-      return null
-    })
-    .catch(err => {
-      throw new Error(err)
-    })
+    .then(() => null)
 }
 
 export const updateEvent = ({ calendarId, event, accessToken }: CreateUpdateEventProps):Promise<GoogleEventType> => {

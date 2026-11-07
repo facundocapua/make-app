@@ -19,9 +19,12 @@ export default function EventsGroupList ({ data }: Props) {
         behavior: 'smooth',
         block: 'start'
       })
-      console.log('Anchor:', anchor)
     }
   }, [])
+
+  if (!data.length) {
+    return <p className='mx-4 text-center text-gray-200'>No hay turnos</p>
+  }
 
   return (
     <section className='mx-4'>
