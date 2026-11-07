@@ -5,7 +5,6 @@ import {
   getEventFormError,
   MAX_NAME_LENGTH,
   MAX_NOTES_LENGTH,
-  parseEventBody,
   pickEventChanges
 } from './event-validation'
 
@@ -69,27 +68,5 @@ describe('getEventChangesError', () => {
     // An event added by hand in Google Calendar can have any duration or an empty name
     const manual = { ...current, fullName: '', duration: 75 } as unknown as EventType
     expect(getEventChangesError({ notes: 'hola' }, manual)).toBeNull()
-  })
-})
-
-describe('parseEventBody', () => {
-  it('keeps only the known fields', () => {
-    const body = { ...form, picture: 'https://evil.example/x.png', id: 'other', extra: true }
-    expect(parseEventBody(body)).toEqual({ data: { ...form, includesTest: false } })
-  })
-
-  it('keeps the optional fields', () => {
-    const body = { ...form, notes: 'hola', includesTest: true, testDate: '2026-04-01T12:00:00.000Z' }
-    expect(parseEventBody(body)).toEqual({ data: body })
-  })
-
-  it.each([
-    ['null', null],
-    ['a number', 1],
-    ['an array', []],
-    ['invalid data', { ...form, price: -1 }],
-    ['invalid test date', { ...form, testDate: 'nope' }]
-  ])('rejects %s', (_name, body) => {
-    expect(parseEventBody(body)).toHaveProperty('error')
   })
 })

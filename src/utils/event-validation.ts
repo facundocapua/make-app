@@ -76,28 +76,3 @@ export const getEventChangesError = (changes: EventChanges, current: EventType) 
 
   return null
 }
-
-type ParsedEventBody = { error: string } | { data: Omit<EventType, 'id' | 'picture'> }
-
-// Validates a whole event sent to the API and keeps only its known fields
-export const parseEventBody = (body: unknown): ParsedEventBody => {
-  const { fullName, date, duration, price, deposit, notes, includesTest, testDate } = (body ?? {}) as EventType
-
-  const error = getEventFormError({ fullName, date, duration, price, deposit, notes })
-  if (error) return { error }
-
-  if (testDate !== undefined && getDateError(testDate)) return { error: 'Ingresá una fecha de prueba válida' }
-
-  return {
-    data: {
-      fullName,
-      date,
-      duration: Number(duration) as EventType['duration'],
-      price,
-      deposit,
-      includesTest: includesTest === true,
-      ...(testDate !== undefined && { testDate }),
-      ...(notes !== undefined && { notes })
-    }
-  }
-}
