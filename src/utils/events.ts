@@ -1,12 +1,13 @@
 import type { EventType, GroupedEventCollection, GroupedEventItemType } from '@/types/event'
+import { zonedDateTime } from './datetime'
+import { formatDateComputer } from './format'
 
 export const groupByDate = (events: Array<EventType>): Array<GroupedEventItemType> => {
   const groupedEvents = events.reduce((current: GroupedEventCollection, item) => {
-    const startDate = new Date(item.date)
-    startDate.setHours(23, 59, 59)
-    const dateIndex = `${startDate.getFullYear()}_${startDate.getMonth()}_${startDate.getDate()}`
+    const dateIndex = formatDateComputer(item.date)
+    const endOfDay = zonedDateTime(dateIndex, '23:59:59')
     current[dateIndex] ??= {
-      date: startDate.toString(),
+      date: Number.isNaN(endOfDay.getTime()) ? item.date : endOfDay.toISOString(),
       events: []
     }
     current[dateIndex].events.push(item)

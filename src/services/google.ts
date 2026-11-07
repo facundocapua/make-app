@@ -1,9 +1,10 @@
 import type { EventType } from '@/types/event'
 import type { GoogleEventType } from './google/types'
 import { parseGoogleEvent } from './google/parse-event'
+import { APP_TIME_ZONE } from '@/utils/datetime'
 
 export const CALENDAR_NAME: string = 'MakeApp Calendar'
-export const CALENDAR_DEFAULT_TIMEZONE: string = 'America/Argentina/Buenos_Aires'
+export const CALENDAR_DEFAULT_TIMEZONE: string = APP_TIME_ZONE
 
 export type CalendarType = {
   id: string,
@@ -129,7 +130,7 @@ export const listEvents = async ({ calendarId, accessToken, since, to }: GetEven
   do {
     const query = new URLSearchParams(pageToken ? { ...params, pageToken } : params)
     const response = await makeApiCall({
-      url: `/calendar/v3/calendars/${calendarId}/events?${query}`,
+      url: `/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events?${query}`,
       accessToken
     })
     const page: EventsPage = await response.json()

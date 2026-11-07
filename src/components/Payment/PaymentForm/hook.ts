@@ -1,6 +1,5 @@
 import type { PaymentType } from '@/types/payment'
 import { SERVICES, PAYMENT_METHODS } from '@/types/payment'
-import type { Reducer } from 'react'
 import { useReducer } from 'react'
 
 const ACTIONS_TYPES = {
@@ -13,14 +12,15 @@ const ACTIONS_TYPES = {
   RESET: 'reset'
 }
 
-const defaultState = {
+// A function, so the date is the current one and not the one from when the module was loaded
+const getDefaultState = (): PaymentType => ({
   date: new Date().toISOString(),
   paymentMethod: PAYMENT_METHODS[0],
   description: '',
   service: SERVICES[0],
   amount: 0,
   clientId: ''
-}
+})
 
 type ActionType<T> = {
   type: keyof typeof ACTIONS_TYPES,
@@ -47,7 +47,7 @@ const ACTIONS = {
     return { ...state, clientId: action.payload }
   },
   [ACTIONS_TYPES.RESET]: (): PaymentType => {
-    return { ...defaultState }
+    return getDefaultState()
   }
 }
 
@@ -67,7 +67,7 @@ type UseFormResponse = PaymentType & {
 }
 
 export default function useForm (): UseFormResponse {
-  const [state, dispatch] = useReducer(reducer, defaultState)
+  const [state, dispatch] = useReducer(reducer, undefined, getDefaultState)
 
   return {
     ...state,
