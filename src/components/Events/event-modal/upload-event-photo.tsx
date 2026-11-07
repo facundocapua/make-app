@@ -3,7 +3,7 @@
 import type { EventType } from '@/types/event'
 import { deletePictureAction, getUploadUrlAction, updateEventPictureAction } from './actions'
 import { compressImage } from './compress-image'
-import { ALLOWED_IMAGE_TYPES, MAX_IMAGE_SIZE } from './upload-config'
+import { ALLOWED_IMAGE_TYPES, MAX_IMAGE_SIZE, MAX_SOURCE_IMAGE_SIZE } from './upload-config'
 import { useCallback, useState, useTransition } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { toast } from 'sonner'
@@ -44,7 +44,13 @@ export default function UploadEventPhoto ({ event }: Props) {
 
     setIsUploading(true)
     try {
-      const publicUrl = await uploadFile(await compressImage(file))
+      const compressed = await compressImage(file)
+      if (compressed.size > MAX_IMAGE_SIZE) {
+        toast.error('La imagen pesa demasiado. Probá con una de hasta 10 MB.', { position: 'top-center' })
+        return
+      }
+
+      const publicUrl = await uploadFile(compressed)
       // Server actions report redirect() as a rejection, so this stays outside the catch path
       startTransition(() => updateEventPictureAction(event.id, publicUrl))
     } catch (e) {
@@ -58,11 +64,11 @@ export default function UploadEventPhoto ({ event }: Props) {
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     onDropRejected: () => {
-      toast.error('Usá una imagen JPG, PNG, WEBP o HEIC de hasta 10 MB', { position: 'top-center' })
+      toast.error('Usá una imagen JPG, PNG, WEBP o HEIC de hasta 50 MB', { position: 'top-center' })
     },
     noDrag: true,
     accept: acceptedImageTypes,
-    maxSize: MAX_IMAGE_SIZE
+    maxSize: MAX_SOURCE_IMAGE_SIZE
   })
 
   const handleDelete = () => {

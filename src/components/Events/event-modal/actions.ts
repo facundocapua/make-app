@@ -39,6 +39,18 @@ const getPictureKey = (picture: string) => {
   return key && !key.includes('/') ? key : null
 }
 
+// Best effort: the action already has its outcome, and a failure here only leaves an unused file behind
+const deleteOrphanedPicture = async (key: string) => {
+  try {
+    await getClient().send(new DeleteObjectCommand({
+      Bucket: process.env.CLOUDFLARE_R2_BUCKET_NAME ?? '',
+      Key: key
+    }))
+  } catch (e) {
+    console.error(e)
+  }
+}
+
 export const updateEventAction = async (eventId: EventType['id'], changes: EventChanges) => {
   const session = await getServerSession(authOptions) as UserSession
   if (!session) {
@@ -105,22 +117,23 @@ export const updateEventPictureAction = async (eventId: EventType['id'], picture
   }
   const { accessToken } = session
 
-  if (!getPictureKey(picture)) {
+  const key = getPictureKey(picture)
+  if (!key) {
     throw new Error('Invalid picture URL')
   }
 
-  const calendar = await getCalendar({ name: CALENDAR_NAME, accessToken: String(accessToken) })
-  const { id: calendarId } = calendar
-
   try {
+    const { id: calendarId } = await getCalendar({ name: CALENDAR_NAME, accessToken: String(accessToken) })
     const event = await getEvent({ calendarId, eventId, accessToken: String(accessToken) })
     const eventData = generateEventObject({ ...event, picture })
     await updateEvent({ calendarId, event: { id: eventId, ...eventData }, accessToken: String(accessToken) })
 
     await setNotification({ type: 'success', message: 'Imagen subida correctamente' })
   } catch (e) {
-    await setNotification({ type: 'error', message: 'Error al subir la imagen' })
     console.error(e)
+    // The file is already in the bucket, and without this no event would ever point to it
+    await deleteOrphanedPicture(key)
+    await setNotification({ type: 'error', message: 'Error al subir la imagen' })
   }
 
   redirect(`/event/${eventId}`)
@@ -177,17 +190,9 @@ export const deleteItem = async (eventId: EventType['id']) => {
     return { ok: false }
   }
 
-  // The event is already gone, so a failure here only leaves an orphaned picture
   const key = getPictureKey(picture)
   if (key) {
-    try {
-      await getClient().send(new DeleteObjectCommand({
-        Bucket: process.env.CLOUDFLARE_R2_BUCKET_NAME ?? '',
-        Key: key
-      }))
-    } catch (e) {
-      console.error(e)
-    }
+    await deleteOrphanedPicture(key)
   }
 
   return { ok: true }
