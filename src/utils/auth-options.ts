@@ -1,7 +1,13 @@
 import type { NextAuthOptions } from 'next-auth'
+import type { GoogleProfile } from 'next-auth/providers/google'
 import GoogleProvider from 'next-auth/providers/google'
 import { refreshAccessToken, scopes } from '@/services/google/auth'
 import type { SessionCallbackProps } from '@/services/google/types'
+
+const getAllowedEmails = () => (process.env.ALLOWED_EMAILS ?? '')
+  .split(',')
+  .map(email => email.trim().toLowerCase())
+  .filter(Boolean)
 
 export const authOptions:NextAuthOptions = {
   // Configure one or more authentication providers
@@ -20,6 +26,11 @@ export const authOptions:NextAuthOptions = {
     })
   ],
   callbacks: {
+    async signIn ({ profile }) {
+      // Denies everyone when ALLOWED_EMAILS is empty or missing
+      const { email, email_verified: emailVerified } = (profile ?? {}) as Partial<GoogleProfile>
+      return Boolean(email && emailVerified && getAllowedEmails().includes(email.toLowerCase()))
+    },
     async jwt ({ token, user, account }) {
       // Initial sign in
       if (account && user) {
