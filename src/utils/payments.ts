@@ -16,12 +16,15 @@ export const isValidPayment = (data: unknown): data is PaymentType => {
     (clientId === undefined || typeof clientId === 'string')
 }
 
+// Sheets runs what looks like a formula, because the row is sent as USER_ENTERED. The leading quote makes it text.
+const asPlainText = (value: string) => /^\s*[=+\-@]/.test(value) ? `'${value}` : value
+
 // This order is the column order of the ledger: changing it corrupts the sheet
 export const getPaymentRow = ({ date, paymentMethod, description, service, amount, clientId }: PaymentType) => [
   new Date(date).toLocaleDateString('es-AR', { timeZone: APP_TIME_ZONE }),
   paymentMethod,
-  description,
+  asPlainText(description),
   service,
   amount,
-  clientId ?? ''
+  asPlainText(clientId ?? '')
 ]

