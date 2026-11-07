@@ -1,32 +1,10 @@
-import React, { useEffect } from 'react'
-import type { CalendarType } from '@/services/google'
-import { getCalendar } from '@/services/google'
+import type { ReactNode } from 'react'
+import { useEffect } from 'react'
 import { useSession, signOut } from 'next-auth/react'
 import type { UserSession } from '@/types/session'
 
-export type UserContextType = {
-  calendar?: CalendarType | null
-}
-
-export const UserContext = React.createContext<UserContextType>({})
-
-export type UserProviderProps = {
-  accessToken?: string,
-  calendarName: string,
-  children: React.ReactNode,
-}
-
-const UserProvider: React.FC<UserProviderProps> = ({ calendarName, children }) => {
-  const [calendar, setCalendar] = React.useState<CalendarType | null>(null)
-  const sess = useSession()
-  const session = sess.data as UserSession
-
-  useEffect(() => {
-    const accessToken = session?.accessToken as string
-    if (accessToken) {
-      getCalendar({ accessToken, name: calendarName }).then(setCalendar).catch(console.error)
-    }
-  }, [session?.accessToken, calendarName])
+export default function UserProvider ({ children }: { children: ReactNode }) {
+  const session = useSession().data as UserSession
 
   useEffect(() => {
     const error = session?.error as string
@@ -35,7 +13,5 @@ const UserProvider: React.FC<UserProviderProps> = ({ calendarName, children }) =
     }
   }, [session?.error])
 
-  return (<UserContext.Provider value={{ calendar }}>{children}</UserContext.Provider>)
+  return children
 }
-
-export default UserProvider
