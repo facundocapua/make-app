@@ -2,26 +2,39 @@
 
 import type { EventType } from '@/types/event'
 import { randomUUID } from 'crypto'
-import S3 from 'aws-sdk/clients/s3.js'
+import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/utils/auth-options'
 import type { UserSession } from '@/types/session'
 import { CALENDAR_NAME, getCalendar } from '@/services/google'
 import { generateEventObject } from '@/utils/google'
-import { deleteEvent, updateEvent } from '@/services/google/events'
+import { deleteEvent, getEvent, updateEvent } from '@/services/google/events'
 import { redirect } from 'next/navigation'
 import { setNotification } from '@/components/toaster/toaster'
+import { ALLOWED_IMAGE_TYPES, MAX_IMAGE_SIZE } from './upload-config'
 
-const getClient = () => {
-  const client = new S3({
-    region: 'auto',
-    signatureVersion: 'v4',
-    endpoint: `https://${process.env.CLOUDFLARE_R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+const UPLOAD_URL_EXPIRATION_SECONDS = 300
+
+const getClient = () => new S3Client({
+  region: 'auto',
+  endpoint: `https://${process.env.CLOUDFLARE_R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+  credentials: {
     accessKeyId: process.env.CLOUDFLARE_R2_ACCESS_KEY ?? '',
     secretAccessKey: process.env.CLOUDFLARE_R2_SECRET_KEY ?? ''
-  })
+  },
+  // By default the SDK adds a checksum to presigned URLs, computed before the file is known
+  requestChecksumCalculation: 'WHEN_REQUIRED',
+  responseChecksumValidation: 'WHEN_REQUIRED'
+})
 
-  return client
+// Returns the bucket key only for URLs that belong to our bucket
+const getPictureKey = (picture: string) => {
+  const publicUrl = process.env.CLOUDFLARE_R2_PUBLIC_URL ?? ''
+  if (!publicUrl || !picture.startsWith(`${publicUrl}/`)) return null
+
+  const key = picture.slice(publicUrl.length + 1)
+  return key && !key.includes('/') ? key : null
 }
 
 export const updateEventAction = async (event: EventType) => {
@@ -41,60 +54,65 @@ export const updateEventAction = async (event: EventType) => {
   redirect(`/event/${event.id}`)
 }
 
-export const getUploadClientDataAction = async () => {
+export const getUploadUrlAction = async (type: string, size: number) => {
   const session = await getServerSession(authOptions) as UserSession
   if (!session) {
     throw new Error('Unauthorized')
   }
-  const { accessToken } = session
 
-  await getCalendar({ name: CALENDAR_NAME, accessToken: String(accessToken) })
-
-  return {
-    region: 'auto',
-    signatureVersion: 'v4',
-    endpoint: `https://${process.env.CLOUDFLARE_R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
-    accessKeyId: process.env.CLOUDFLARE_R2_ACCESS_KEY ?? '',
-    secretAccessKey: process.env.CLOUDFLARE_R2_SECRET_KEY ?? '',
-    bucket: process.env.CLOUDFLARE_R2_BUCKET_NAME ?? '',
-    publicUrl: process.env.CLOUDFLARE_R2_PUBLIC_URL ?? ''
+  const extension = Object.hasOwn(ALLOWED_IMAGE_TYPES, type) ? ALLOWED_IMAGE_TYPES[type] : null
+  if (!extension || !Number.isInteger(size) || size <= 0 || size > MAX_IMAGE_SIZE) {
+    throw new Error('Invalid file')
   }
+
+  const key = `${randomUUID()}.${extension}`
+  const uploadUrl = await getSignedUrl(
+    getClient(),
+    new PutObjectCommand({
+      Bucket: process.env.CLOUDFLARE_R2_BUCKET_NAME ?? '',
+      Key: key,
+      ContentType: type,
+      ContentLength: size
+    }),
+    {
+      expiresIn: UPLOAD_URL_EXPIRATION_SECONDS,
+      // The SDK leaves content-type out of the signature unless it is listed here
+      signableHeaders: new Set(['content-type', 'content-length'])
+    }
+  )
+
+  return { uploadUrl, publicUrl: `${process.env.CLOUDFLARE_R2_PUBLIC_URL}/${key}` }
 }
 
-export const updateEventPictureAction = async (event: EventType, picture: string) => {
+export const updateEventPictureAction = async (eventId: EventType['id'], picture: string) => {
   const session = await getServerSession(authOptions) as UserSession
   if (!session) {
     throw new Error('Unauthorized')
   }
   const { accessToken } = session
+
+  if (!getPictureKey(picture)) {
+    throw new Error('Invalid picture URL')
+  }
 
   const calendar = await getCalendar({ name: CALENDAR_NAME, accessToken: String(accessToken) })
   const { id: calendarId } = calendar
 
   try {
-    const newData = { ...event, picture }
-    const eventData = generateEventObject(newData)
-    await updateEvent({ calendarId, event: { id: event.id, ...eventData }, accessToken: String(accessToken) })
+    const event = await getEvent({ calendarId, eventId, accessToken: String(accessToken) })
+    const eventData = generateEventObject({ ...event, picture })
+    await updateEvent({ calendarId, event: { id: eventId, ...eventData }, accessToken: String(accessToken) })
 
     setNotification({ type: 'success', message: 'Imagen subida correctamente' })
   } catch (e) {
     setNotification({ type: 'error', message: 'Error al subir la imagen' })
-    console.log(e)
+    console.error(e)
   }
 
-  redirect(`/event/${event.id}`)
+  redirect(`/event/${eventId}`)
 }
 
-export const uploadPictureAction = async (event: EventType, data: FormData) => {
-  const file: File | null = data.get('file') as unknown as File
-
-  if (!file) {
-    throw new Error('No file uploaded')
-  }
-  if (!file.type.startsWith('image/')) {
-    throw new Error('Invalid file type')
-  }
-
+export const deletePictureAction = async (eventId: EventType['id']) => {
   const session = await getServerSession(authOptions) as UserSession
   if (!session) {
     throw new Error('Unauthorized')
@@ -103,75 +121,28 @@ export const uploadPictureAction = async (event: EventType, data: FormData) => {
 
   const calendar = await getCalendar({ name: CALENDAR_NAME, accessToken: String(accessToken) })
   const { id: calendarId } = calendar
-
-  const fileExt = file.name.split('.').pop()
-  const fileName = `${randomUUID()}.${fileExt}`
-
-  const publicUrl = process.env.CLOUDFLARE_R2_PUBLIC_URL ?? ''
-  const client = getClient()
-
   try {
-    const buffer = Buffer.from(await file.arrayBuffer())
-
-    const params = {
-      Bucket: process.env.CLOUDFLARE_R2_BUCKET_NAME ?? '',
-      Key: fileName,
-      Body: buffer,
-      // ACL: 'public-read'
-      ContentType: file.type
+    // The key comes from the stored event, never from the client
+    const event = await getEvent({ calendarId, eventId, accessToken: String(accessToken) })
+    const key = getPictureKey(event.picture ?? '')
+    if (!key) {
+      throw new Error('Invalid picture URL')
     }
 
-    await client.upload(params).promise()
-
-    const newData = { ...event, picture: `${publicUrl}/${fileName}` }
-    const eventData = generateEventObject(newData)
-    await updateEvent({ calendarId, event: { id: event.id, ...eventData }, accessToken: String(accessToken) })
-
-    setNotification({ type: 'success', message: 'Imagen subida correctamente' })
-  } catch (e) {
-    setNotification({ type: 'error', message: 'Error al subir la imagen' })
-    console.log(e)
-  }
-
-  redirect(`/event/${event.id}`)
-}
-
-export const deletePictureAction = async (event: EventType) => {
-  if (!event) {
-    throw new Error('No event')
-  }
-
-  if (!event.picture) {
-    throw new Error('No picture')
-  }
-
-  const session = await getServerSession(authOptions) as UserSession
-  if (!session) {
-    throw new Error('Unauthorized')
-  }
-  const { accessToken } = session
-
-  const calendar = await getCalendar({ name: CALENDAR_NAME, accessToken: String(accessToken) })
-  const { id: calendarId } = calendar
-  try {
-    const client = getClient()
-    const fileName = event.picture.split('/').pop()
-
-    await client.deleteObject({
+    await getClient().send(new DeleteObjectCommand({
       Bucket: process.env.CLOUDFLARE_R2_BUCKET_NAME ?? '',
-      Key: fileName ?? ''
-    }).promise()
+      Key: key
+    }))
 
-    const newData = { ...event, picture: '' }
-    const eventData = generateEventObject(newData)
-    await updateEvent({ calendarId, event: { id: event.id, ...eventData }, accessToken: String(accessToken) })
+    const eventData = generateEventObject({ ...event, picture: '' })
+    await updateEvent({ calendarId, event: { id: eventId, ...eventData }, accessToken: String(accessToken) })
     setNotification({ type: 'success', message: 'Imagen eliminada correctamente' })
   } catch (e) {
     setNotification({ type: 'error', message: 'Error al eliminar la imagen' })
-    console.log(e)
+    console.error(e)
   }
 
-  redirect(`/event/${event.id}`)
+  redirect(`/event/${eventId}`)
 }
 
 export const deleteItem = async (eventId: EventType['id']) => {
