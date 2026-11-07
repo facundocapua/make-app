@@ -1,19 +1,11 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { UserSession } from '@/types/session'
-import type { PaymentType } from '@/types/payment'
-import { PAYMENT_METHODS, SERVICES } from '@/types/payment'
 import { GoogleApiError } from '@/services/google'
 import { appendRow } from '@/services/google/sheets'
 import { getServerSession } from 'next-auth'
 import { NextResponse } from 'next/server'
 import { authOptions } from '@/utils/auth-options'
-
-const isValidPayment = ({ date, paymentMethod, service, amount }: PaymentType) => {
-  return !Number.isNaN(Date.parse(date)) &&
-    PAYMENT_METHODS.includes(paymentMethod) &&
-    SERVICES.includes(service) &&
-    Number(amount) > 0
-}
+import { getPaymentRow, isValidPayment } from '@/utils/payments'
 
 const handler = async (
   req: Request
@@ -23,7 +15,7 @@ const handler = async (
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
   }
 
-  const data:PaymentType = await req.json()
+  const data: unknown = await req.json().catch(() => null)
   if (!isValidPayment(data)) {
     return NextResponse.json({ message: 'Invalid payment' }, { status: 400 })
   }
@@ -31,13 +23,9 @@ const handler = async (
   const { accessToken } = session
   const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID ?? ''
   const range = `${process.env.GOOGLE_SHEET_NAME}!A2:E`
-  const parsedData = {
-    ...data,
-    date: new Date(data.date).toLocaleDateString('es-AR')
-  }
   const rowData = {
     values: [
-      Object.values(parsedData)
+      getPaymentRow(data)
     ]
   }
 

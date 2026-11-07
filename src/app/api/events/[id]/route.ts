@@ -1,6 +1,7 @@
 import type { EventType } from '@/types/event'
-import { CALENDAR_NAME, getCalendar } from '@/services/google'
-import { deleteEvent, updateEvent } from '@/services/google/events'
+import { CALENDAR_NAME, getCalendar, GoogleApiError } from '@/services/google'
+import { deleteEvent, getEvent, updateEvent } from '@/services/google/events'
+import { parseEventBody } from '@/utils/event-validation'
 import { generateEventObject } from '@/utils/google'
 import type { UserSession } from '@/types/session'
 import { getServerSession } from 'next-auth'
@@ -38,12 +39,18 @@ const handler = async (
 
   if (method === 'PUT') {
     try {
-      const data:EventType = await req.json()
-      const eventData = generateEventObject(data)
+      const parsed = parseEventBody(await req.json().catch(() => null))
+      if ('error' in parsed) {
+        return NextResponse.json({ message: parsed.error }, { status: 400 })
+      }
+
+      // The picture is only managed by its own actions, so it stays as stored
+      const current = await getEvent({ calendarId, eventId: id, accessToken: String(accessToken) })
+      const eventData = generateEventObject({ ...current, ...parsed.data })
       await updateEvent({ calendarId, event: { id, ...eventData }, accessToken: String(accessToken) })
       return NextResponse.json({ message: 'Event updated' })
     } catch (e: any) {
-      return NextResponse.json({ message: e.message }, { status: 400 })
+      return NextResponse.json({ message: e.message }, { status: e instanceof GoogleApiError ? e.status : 500 })
     }
   }
 }

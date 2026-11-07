@@ -9,7 +9,7 @@ import { authOptions } from '@/utils/auth-options'
 import { generateEventObject } from '@/utils/google'
 import { getServerSession } from 'next-auth'
 import { redirect } from 'next/navigation'
-import { getEventFormError } from './validation'
+import { getEventFormError } from '@/utils/event-validation'
 
 export type CreateEventState = { error: string } | null
 
