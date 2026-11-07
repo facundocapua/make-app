@@ -2,6 +2,7 @@
 
 import type { EventType } from '@/types/event'
 import { deletePictureAction, getUploadUrlAction, updateEventPictureAction } from './actions'
+import { compressImage } from './compress-image'
 import { ALLOWED_IMAGE_TYPES, MAX_IMAGE_SIZE } from './upload-config'
 import { useCallback, useState, useTransition } from 'react'
 import { useDropzone } from 'react-dropzone'
@@ -43,7 +44,7 @@ export default function UploadEventPhoto ({ event }: Props) {
 
     setIsUploading(true)
     try {
-      const publicUrl = await uploadFile(file)
+      const publicUrl = await uploadFile(await compressImage(file))
       // Server actions report redirect() as a rejection, so this stays outside the catch path
       startTransition(() => updateEventPictureAction(event.id, publicUrl))
     } catch (e) {

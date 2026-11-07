@@ -50,7 +50,7 @@ When changing event code:
 - `createEventAction` builds its record field by field from `FormData` and doesn't set `includesTest` or `testDate`, and `parseEventBody` in [event-validation.ts](src/utils/event-validation.ts) keeps only known fields, so a new field must be added to both explicitly.
 - `updateEventAction(eventId, changes)` re-reads the event on the server and applies only `EDITABLE_EVENT_FIELDS`, validating just the fields that change, because events added by hand may not pass a full validation. A new editable field must be added to that list and to `getEventChangesError`.
 - `listEvents` follows `nextPageToken` and limits the response with `fields`, so a new Calendar field must also be added to that list.
-- `getCalendar` finds or creates the calendar named by `CALENDAR_NAME` (`'MakeApp Calendar'`) and is called from nearly every server entrypoint to resolve the `calendarId`.
+- `getCalendar` finds or creates the calendar named by `CALENDAR_NAME` (`'MakeApp Calendar'`) and is called from nearly every server entrypoint to resolve the `calendarId`. It caches the result for 10 minutes per access token, in each server instance's memory, so it is server-only (it imports `node:crypto`). A calendar deleted by hand can keep failing until that cache expires.
 
 ### Income ledger (Google Sheets)
 
@@ -62,7 +62,7 @@ Every appointment happens in Argentina, while the server runs in UTC and a brows
 
 ### Picture uploads (Cloudflare R2)
 
-[UploadEventPhoto](src/components/Events/event-modal/upload-event-photo.tsx) uploads directly from the browser with a presigned URL: `getUploadUrlAction` validates type and size and signs a `PUT` valid for 5 minutes, then `updateEventPictureAction` saves the public URL into the event description. `deletePictureAction` deletes the R2 object and clears `picture`. Both picture actions take the event ID and re-read the event on the server, and the bucket key must never come from the client. R2 credentials stay on the server.
+[UploadEventPhoto](src/components/Events/event-modal/upload-event-photo.tsx) first shrinks the image in the browser (`compressImage`, which falls back to the original file), then uploads it directly with a presigned URL: `getUploadUrlAction` validates type and size and signs a `PUT` valid for 5 minutes, then `updateEventPictureAction` saves the public URL into the event description. `deletePictureAction` deletes the R2 object and clears `picture`. Both picture actions take the event ID and re-read the event on the server, and the bucket key must never come from the client. R2 credentials stay on the server.
 
 Things that are easy to break in the signing call: the SDK leaves `content-type` out of the signature unless it is in `signableHeaders`, and it adds a checksum to the URL unless `requestChecksumCalculation` is `WHEN_REQUIRED`. Also, `redirect()` in a server action rejects the promise on the client, so call these actions inside `startTransition`, not `try/catch`.
 
@@ -75,7 +75,6 @@ Mutations use **server actions** ([event-modal/actions.ts](src/components/Events
 ### Code with no callers in `src`
 
 Check before extending these; the live path is usually the server action above:
-- `useGroupedEvents` → `useEventCollection` → `services/api/{updateEvent,deleteEvent}`, plus `services/api/saveEvent` and `hooks/useCalendar`
 - Routes `POST /api/events`, `PUT|DELETE /api/events/[id]`, `GET /api/events/export` (could still be called from outside the app)
 - The `zustand` dependency is not imported
 
