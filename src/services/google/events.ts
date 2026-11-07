@@ -11,7 +11,7 @@ export type CreateUpdateEventProps = {
 
 export const createEvent = ({ calendarId, event, accessToken }: CreateUpdateEventProps):Promise<GoogleEventType> => {
   return makeApiCall({
-    url: `/calendar/v3/calendars/${calendarId}/events`,
+    url: `/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events`,
     accessToken,
     method: 'POST',
     data: event
@@ -30,7 +30,7 @@ export type GetUpdateEventProps = {
 
 export const getEvent = ({ calendarId, eventId, accessToken }: GetUpdateEventProps):Promise<EventType> => {
   return makeApiCall({
-    url: `/calendar/v3/calendars/${calendarId}/events/${eventId}`,
+    url: `/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events/${encodeURIComponent(eventId)}`,
     accessToken,
     method: 'GET'
   })
@@ -46,7 +46,7 @@ export type DeleteEventProps = {
 
 export const deleteEvent = ({ calendarId, eventId, accessToken }: DeleteEventProps):Promise<null> => {
   return makeApiCall({
-    url: `/calendar/v3/calendars/${calendarId}/events/${eventId}`,
+    url: `/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events/${encodeURIComponent(eventId)}`,
     accessToken,
     method: 'DELETE'
   })
@@ -56,7 +56,7 @@ export const deleteEvent = ({ calendarId, eventId, accessToken }: DeleteEventPro
 export const updateEvent = ({ calendarId, event, accessToken }: CreateUpdateEventProps):Promise<GoogleEventType> => {
   const { id, ...restOfEvent } = event
   return makeApiCall({
-    url: `/calendar/v3/calendars/${calendarId}/events/${id}`,
+    url: `/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events/${encodeURIComponent(id)}`,
     accessToken,
     method: 'PUT',
     data: restOfEvent

@@ -13,7 +13,7 @@ type Props = {
   }>
 }
 
-export default async function EventPage({ params }: Props) {
+export default async function EventPage ({ params }: Props) {
   const session = await getServerSession(authOptions) as UserSession
   if (!session) {
     redirect('/api/auth/signin')

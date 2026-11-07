@@ -19,26 +19,26 @@ import { formatDateComputer } from '@/utils/format'
 type Props = {
   event: EventType
 }
-export default function EventModal({ event }: Props) {
+export default function EventModal ({ event }: Props) {
   const { fullName, date, duration, price, deposit, notes } = event
   const status = getEventStatus(event)
   const [isSaving, startTransition] = useTransition()
   const router = useRouter()
 
   const handleNameChange = (fullName: string) => {
-    startTransition(() => updateEventAction({ ...event, fullName }))
+    startTransition(() => updateEventAction(event.id, { fullName }))
   }
 
   const handleDateChange = (date: string) => {
-    startTransition(() => updateEventAction({ ...event, date }))
+    startTransition(() => updateEventAction(event.id, { date }))
   }
 
   const handlePriceChange = (price: number, deposit: number) => {
-    startTransition(() => updateEventAction({ ...event, price, deposit }))
+    startTransition(() => updateEventAction(event.id, { price, deposit }))
   }
 
   const handleNotesChange = (value: string) => {
-    startTransition(() => updateEventAction({ ...event, notes: value }))
+    startTransition(() => updateEventAction(event.id, { notes: value }))
   }
 
   const handleClose = () => {

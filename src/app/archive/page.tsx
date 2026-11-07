@@ -4,6 +4,7 @@ import type { UserSession } from '@/types/session'
 import { redirect } from 'next/navigation'
 import type { GetEventsProps } from '@/services/google'
 import { CALENDAR_NAME, getCalendar, listEvents } from '@/services/google'
+import { startOfZonedDay } from '@/utils/datetime'
 import { groupByDate } from '@/utils/events'
 import EventsGroupList from '@/components/Events/events-group-list'
 import { handlePageError } from '@/utils/page-errors'
@@ -21,7 +22,9 @@ export default async function ArchivePage () {
     const params: GetEventsProps = { calendarId, accessToken: String(accessToken) }
 
     const today = new Date()
-    params.since = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate())
+    const since = startOfZonedDay(today)
+    since.setUTCFullYear(since.getUTCFullYear() - 1)
+    params.since = since
     params.to = today
 
     const events = await listEvents(params)

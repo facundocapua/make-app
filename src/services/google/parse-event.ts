@@ -1,5 +1,5 @@
 import type { EventType } from '@/types/event'
-import { durationOptions } from '@/utils/datetime'
+import { durationOptions, zonedDateTime } from '@/utils/datetime'
 import type { GoogleEventType } from './types'
 
 const DURATIONS = durationOptions.map(Number)
@@ -14,6 +14,12 @@ const getClosestDuration = (minutes: number) => {
   }) as EventType['duration']
 }
 
+// All-day events only have a day, which would otherwise be read as midnight UTC: the evening before in Argentina
+const getAllDayStart = (day = '') => {
+  const start = zonedDateTime(day, '00:00')
+  return Number.isNaN(start.getTime()) ? day : start.toISOString()
+}
+
 export const parseGoogleEvent = (item: GoogleEventType): EventType => {
   try {
     const data = JSON.parse(item.description ?? '')
@@ -24,8 +30,8 @@ export const parseGoogleEvent = (item: GoogleEventType): EventType => {
     // Events created directly in Google Calendar don't have a JSON description
   }
 
-  const date = item.start?.dateTime ?? item.start?.date ?? ''
-  const end = item.end?.dateTime ?? item.end?.date ?? date
+  const date = item.start?.dateTime ?? getAllDayStart(item.start?.date)
+  const end = item.end?.dateTime ?? (item.end?.date ? getAllDayStart(item.end.date) : date)
   const minutes = (new Date(end).getTime() - new Date(date).getTime()) / 60000
 
   return {

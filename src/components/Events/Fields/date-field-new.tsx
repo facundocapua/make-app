@@ -1,5 +1,5 @@
 import { CheckIcon, EditIcon } from '@/components/Icons'
-import { timeOptions } from '@/utils/datetime'
+import { timeOptions, zonedDateTime } from '@/utils/datetime'
 import { formatDateComputer, formatDateTime, formatTime } from '@/utils/format'
 import { useEffect, useState } from 'react'
 import useEditInline from '../useEditInline'
@@ -17,7 +17,7 @@ export default function DateField ({ date, onChange }: Props) {
 
   useEffect(() => {
     try {
-      const newDate = new Date(`${onlyDate}T${onlyTime}`)
+      const newDate = zonedDateTime(onlyDate, onlyTime)
       setNewValue(newDate.toISOString())
     } catch (e) {
       console.log(`Problem with the date: ${onlyDate}T${onlyTime}`)

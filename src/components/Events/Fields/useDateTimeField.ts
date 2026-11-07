@@ -1,3 +1,4 @@
+import { zonedDateTime } from '@/utils/datetime'
 import { formatDateComputer, formatTime } from '@/utils/format'
 import type { Dispatch, SetStateAction } from 'react'
 import { useEffect, useState } from 'react'
@@ -20,7 +21,7 @@ export default function useDateTimeField ({ value, onChange }: Props): Return {
 
   useEffect(() => {
     try {
-      const newDate = new Date(`${onlyDate}T${onlyTime}`)
+      const newDate = zonedDateTime(onlyDate, onlyTime)
       onChange(newDate.toISOString())
     } catch (e) {
       console.log(`Problem with the date: ${onlyDate}T${onlyTime}`)

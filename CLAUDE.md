@@ -16,18 +16,13 @@ Use **pnpm**. `pnpm-lock.yaml` is the maintained lockfile, even though the READM
 pnpm dev             # next dev
 pnpm build           # next build
 pnpm start           # next start
-pnpm exec tsc --noEmit   # typecheck (currently passes); the most reliable static check
+pnpm lint            # eslint src (flat config wrapping the "standard" rules)
+pnpm test            # vitest run; tests sit next to the code as *.test.ts
+pnpm exec vitest run src/utils/format.test.ts   # a single test file
+pnpm exec tsc --noEmit   # typecheck
 ```
 
-There are no tests.
-
-**Linting is currently broken.** `pnpm lint` runs `next lint`, which Next 16 removed, and plain `eslint` fails because ESLint 9 expects a flat config while the repo only has `.eslintrc.json`. This runs it against the legacy config:
-
-```bash
-ESLINT_USE_FLAT_CONFIG=false pnpm exec eslint src --ext .ts,.tsx
-```
-
-Most of its output is `Definition for rule '@typescript-eslint/indent' was not found`, because typescript-eslint v8 removed that rule. Ignore that noise. 2-space indent is a convention here, not something the linter enforces.
+CI ([.github/workflows/ci.yml](.github/workflows/ci.yml)) runs all of these plus the build, on pull requests and pushes to `main`. It runs the tests under two timezones, so date tests must not depend on the machine's timezone. Actions are pinned by commit SHA, and dependencies are installed with `--ignore-scripts`.
 
 ## Environment variables (`.env.local`)
 
@@ -52,13 +47,18 @@ The appointment record is JSON-serialized into the **`description`** field of a 
 
 When changing event code:
 - A new [`EventType`](src/types/event.d.ts) field needs no schema change, but older events won't have it, so reads must tolerate its absence.
-- `createEventAction` builds its record field by field from `FormData` and doesn't set `includesTest` or `testDate`, so a new field must be added there explicitly. Update paths spread the existing event instead.
+- `createEventAction` builds its record field by field from `FormData` and doesn't set `includesTest` or `testDate`, and `parseEventBody` in [event-validation.ts](src/utils/event-validation.ts) keeps only known fields, so a new field must be added to both explicitly.
+- `updateEventAction(eventId, changes)` re-reads the event on the server and applies only `EDITABLE_EVENT_FIELDS`, validating just the fields that change, because events added by hand may not pass a full validation. A new editable field must be added to that list and to `getEventChangesError`.
 - `listEvents` follows `nextPageToken` and limits the response with `fields`, so a new Calendar field must also be added to that list.
 - `getCalendar` finds or creates the calendar named by `CALENDAR_NAME` (`'MakeApp Calendar'`) and is called from nearly every server entrypoint to resolve the `calendarId`.
 
 ### Income ledger (Google Sheets)
 
-`POST /api/payments` ([route](src/app/api/payments/route.ts)) appends `Object.values(parsedData)` as a row to `${GOOGLE_SHEET_NAME}!A2:E`. **Sheet column order comes from the key order of the request body**, which is set by `defaultState` in [PaymentForm/hook.ts](src/components/Payment/PaymentForm/hook.ts), not by the `PaymentType` declaration (the two differ). Reordering `defaultState` silently corrupts the ledger. It currently sends date, paymentMethod, description, service, amount, plus an empty `clientId` as a sixth value.
+`POST /api/payments` ([route](src/app/api/payments/route.ts)) appends a row to `${GOOGLE_SHEET_NAME}!A2:E`. **`getPaymentRow` in [utils/payments.ts](src/utils/payments.ts) defines the sheet column order**: date, paymentMethod, description, service, amount, plus an empty `clientId` as a sixth value. Reordering it corrupts the ledger.
+
+### Timezone
+
+Every appointment happens in Argentina, while the server runs in UTC and a browser can be anywhere. Convert between instants and wall clock times only through [utils/datetime.ts](src/utils/datetime.ts) (`APP_TIME_ZONE`, `zonedDateTime`, `getZonedDay`, `startOfZonedDay`) and the formatters in [utils/format.ts](src/utils/format.ts). Never use local getters such as `getHours()`, `setHours()`, or `toLocale*` without `timeZone`, or server and client will disagree.
 
 ### Picture uploads (Cloudflare R2)
 

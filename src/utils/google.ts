@@ -1,7 +1,7 @@
 import { CALENDAR_DEFAULT_TIMEZONE } from '@/services/google'
 import type { EventType } from '@/types/event'
 
-export const generateEventObject = (data: EventType) => {
+export const generateEventObject = (data: Omit<EventType, 'id'>) => {
   const { fullName, date, duration } = data
   const startDate = new Date(date)
   const endDate = new Date(startDate)

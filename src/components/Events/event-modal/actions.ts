@@ -8,6 +8,8 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/utils/auth-options'
 import type { UserSession } from '@/types/session'
 import { CALENDAR_NAME, getCalendar } from '@/services/google'
+import type { EventChanges } from '@/utils/event-validation'
+import { getEventChangesError, pickEventChanges } from '@/utils/event-validation'
 import { generateEventObject } from '@/utils/google'
 import { deleteEvent, getEvent, updateEvent } from '@/services/google/events'
 import { redirect } from 'next/navigation'
@@ -37,7 +39,7 @@ const getPictureKey = (picture: string) => {
   return key && !key.includes('/') ? key : null
 }
 
-export const updateEventAction = async (event: EventType) => {
+export const updateEventAction = async (eventId: EventType['id'], changes: EventChanges) => {
   const session = await getServerSession(authOptions) as UserSession
   if (!session) {
     throw new Error('Unauthorized')
@@ -45,17 +47,25 @@ export const updateEventAction = async (event: EventType) => {
   const { accessToken } = session
 
   try {
+    const allowedChanges = pickEventChanges(changes)
     const { id: calendarId } = await getCalendar({ name: CALENDAR_NAME, accessToken: String(accessToken) })
-    const eventData = generateEventObject(event)
-    await updateEvent({ calendarId, event: { id: event.id, ...eventData }, accessToken: String(accessToken) })
+    const event = await getEvent({ calendarId, eventId, accessToken: String(accessToken) })
 
-    await setNotification({ type: 'success', message: 'Evento actualizado correctamente' })
+    const error = getEventChangesError(allowedChanges, event)
+    if (error) {
+      await setNotification({ type: 'error', message: error })
+    } else {
+      const eventData = generateEventObject({ ...event, ...allowedChanges })
+      await updateEvent({ calendarId, event: { id: eventId, ...eventData }, accessToken: String(accessToken) })
+
+      await setNotification({ type: 'success', message: 'Evento actualizado correctamente' })
+    }
   } catch (e) {
     console.error(e)
     await setNotification({ type: 'error', message: 'No se pudo guardar el cambio. Intentá de nuevo.' })
   }
 
-  redirect(`/event/${event.id}`)
+  redirect(`/event/${eventId}`)
 }
 
 export const getUploadUrlAction = async (type: string, size: number) => {
