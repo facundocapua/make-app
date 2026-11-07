@@ -44,13 +44,17 @@ export const updateEventAction = async (event: EventType) => {
   }
   const { accessToken } = session
 
-  const calendar = await getCalendar({ name: CALENDAR_NAME, accessToken: String(accessToken) })
-  const { id: calendarId } = calendar
+  try {
+    const { id: calendarId } = await getCalendar({ name: CALENDAR_NAME, accessToken: String(accessToken) })
+    const eventData = generateEventObject(event)
+    await updateEvent({ calendarId, event: { id: event.id, ...eventData }, accessToken: String(accessToken) })
 
-  const eventData = generateEventObject(event)
-  await updateEvent({ calendarId, event: { id: event.id, ...eventData }, accessToken: String(accessToken) })
+    await setNotification({ type: 'success', message: 'Evento actualizado correctamente' })
+  } catch (e) {
+    console.error(e)
+    await setNotification({ type: 'error', message: 'No se pudo guardar el cambio. Intentá de nuevo.' })
+  }
 
-  setNotification({ type: 'success', message: 'Evento actualizado correctamente' })
   redirect(`/event/${event.id}`)
 }
 
@@ -103,9 +107,9 @@ export const updateEventPictureAction = async (eventId: EventType['id'], picture
     const eventData = generateEventObject({ ...event, picture })
     await updateEvent({ calendarId, event: { id: eventId, ...eventData }, accessToken: String(accessToken) })
 
-    setNotification({ type: 'success', message: 'Imagen subida correctamente' })
+    await setNotification({ type: 'success', message: 'Imagen subida correctamente' })
   } catch (e) {
-    setNotification({ type: 'error', message: 'Error al subir la imagen' })
+    await setNotification({ type: 'error', message: 'Error al subir la imagen' })
     console.error(e)
   }
 
@@ -136,9 +140,9 @@ export const deletePictureAction = async (eventId: EventType['id']) => {
 
     const eventData = generateEventObject({ ...event, picture: '' })
     await updateEvent({ calendarId, event: { id: eventId, ...eventData }, accessToken: String(accessToken) })
-    setNotification({ type: 'success', message: 'Imagen eliminada correctamente' })
+    await setNotification({ type: 'success', message: 'Imagen eliminada correctamente' })
   } catch (e) {
-    setNotification({ type: 'error', message: 'Error al eliminar la imagen' })
+    await setNotification({ type: 'error', message: 'Error al eliminar la imagen' })
     console.error(e)
   }
 
@@ -152,9 +156,29 @@ export const deleteItem = async (eventId: EventType['id']) => {
   }
   const { accessToken } = session
 
-  const calendar = await getCalendar({ name: CALENDAR_NAME, accessToken: String(accessToken) })
-  const { id: calendarId } = calendar
-  await deleteEvent({ calendarId, eventId, accessToken })
+  let picture = ''
+  try {
+    const { id: calendarId } = await getCalendar({ name: CALENDAR_NAME, accessToken: String(accessToken) })
+    const event = await getEvent({ calendarId, eventId, accessToken: String(accessToken) })
+    picture = event.picture ?? ''
+    await deleteEvent({ calendarId, eventId, accessToken: String(accessToken) })
+  } catch (e) {
+    console.error(e)
+    return { ok: false }
+  }
 
-  redirect('/')
+  // The event is already gone, so a failure here only leaves an orphaned picture
+  const key = getPictureKey(picture)
+  if (key) {
+    try {
+      await getClient().send(new DeleteObjectCommand({
+        Bucket: process.env.CLOUDFLARE_R2_BUCKET_NAME ?? '',
+        Key: key
+      }))
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  return { ok: true }
 }

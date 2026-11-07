@@ -6,11 +6,12 @@ import { AlertType } from '@/types/alerts'
 import type { PaymentType } from '@/types/payment'
 import { PAYMENT_METHODS, SERVICES } from '@/types/payment'
 import type { FormEvent } from 'react'
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import useForm from './hook'
 
 export default function PaymentForm () {
   const { addAlert } = useContext(AlertsContext) as AlertsContextType
+  const [isSaving, setIsSaving] = useState(false)
 
   const {
     updateDate,
@@ -26,15 +27,22 @@ export default function PaymentForm () {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    if (isSaving) return
+
+    if (!(amount > 0)) {
+      addAlert({ type: AlertType.ERROR, message: 'Ingresá un monto mayor a cero' })
+      return
+    }
+
+    setIsSaving(true)
     savePayment(state)
-      .then(res => {
-        console.log({ res })
+      .then(() => {
         addAlert({ type: AlertType.SUCCESS, message: 'Pago guardado con éxito' })
         reset()
       }).catch(err => {
         console.error(err)
         addAlert({ type: AlertType.ERROR, message: 'Error al guardar el pago' })
-      })
+      }).finally(() => setIsSaving(false))
   }
 
   return (
@@ -65,6 +73,7 @@ export default function PaymentForm () {
         value={String(amount)}
         onChange={(value) => updateAmount(Number(value))}
         type='number'
+        min={0}
       />
 
       <Select
@@ -75,7 +84,9 @@ export default function PaymentForm () {
         onChange={(value) => updateService(value as PaymentType['service'])}
       />
 
-      <button type='submit' className='p-2 mx-2 text-gray-100 bg-gray-700 border-2 border-gray-400 rounded-xl hover:bg-gray-300 hover:text-gray-700'>Guardar</button>
+      <button type='submit' disabled={isSaving} className='p-2 mx-2 text-gray-100 bg-gray-700 border-2 border-gray-400 rounded-xl hover:bg-gray-300 hover:text-gray-700 disabled:opacity-50 disabled:pointer-events-none'>
+        {isSaving ? 'Guardando...' : 'Guardar'}
+      </button>
     </form>
   )
 }
