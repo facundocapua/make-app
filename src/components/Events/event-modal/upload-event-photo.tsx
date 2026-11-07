@@ -1,72 +1,71 @@
 'use client'
 
 import type { EventType } from '@/types/event'
-import { deletePictureAction, getUploadClientDataAction, updateEventPictureAction } from './actions'
-import { useCallback, useState } from 'react'
+import { deletePictureAction, getUploadUrlAction, updateEventPictureAction } from './actions'
+import { ALLOWED_IMAGE_TYPES, MAX_IMAGE_SIZE } from './upload-config'
+import { useCallback, useState, useTransition } from 'react'
 import { useDropzone } from 'react-dropzone'
+import { toast } from 'sonner'
 import { DeleteIcon, EnlargeIcon } from '@/components/Icons'
 import Spinner from '@/components/Ui/Spinner'
-import S3 from 'aws-sdk/clients/s3.js'
 
 type Props = {
   event: EventType
 }
 
-const uploadFile = async (bucketData: Record<string, string>, file: File) => {
-  const { bucket, publicUrl, ...clientData } = bucketData
+const acceptedImageTypes = Object.fromEntries(
+  Object.keys(ALLOWED_IMAGE_TYPES).map((type): [string, string[]] => [type, []])
+)
 
-  const fileExt = file.name.split('.').pop()
-  const fileName = `${self.crypto.randomUUID()}.${fileExt}`
+const uploadFile = async (file: File) => {
+  const { uploadUrl, publicUrl } = await getUploadUrlAction(file.type, file.size)
 
-  const client = new S3(clientData)
-
-  try {
-    const params = {
-      Bucket: bucket,
-      Key: fileName,
-      Body: file,
-      // ACL: 'public-read'
-      ContentType: file.type
-    }
-    await client.upload(
-      params, {
-        partSize: 50 * 1024 * 1024, queueSize: 1
-      }).promise()
-
-    return { url: `${publicUrl}/${fileName}` }
-  } catch (e) {
-    console.log(e)
+  const response = await fetch(uploadUrl, {
+    method: 'PUT',
+    headers: { 'Content-Type': file.type },
+    body: file
+  })
+  if (!response.ok) {
+    throw new Error(`Upload failed with status ${response.status}`)
   }
+
+  return publicUrl
 }
 
 export default function UploadEventPhoto ({ event }: Props) {
-  const uploadPhotoSubmit = updateEventPictureAction.bind(null, event)
-  const deletePhotoSubmit = deletePictureAction.bind(null, event)
-  const [isSaving, setIsSaving] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
+  const [isPending, startTransition] = useTransition()
+  const isSaving = isUploading || isPending
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    setIsSaving(true)
+  const onDrop = useCallback(async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0]
-    getUploadClientDataAction().then(clientData => {
-      uploadFile(clientData, file).then(data => {
-        if (!data) return
-        uploadPhotoSubmit(data.url).then(() => {
-          setIsSaving(false)
-        })
-      })
-    })
-  }, [])
+    if (!file) return
+
+    setIsUploading(true)
+    try {
+      const publicUrl = await uploadFile(file)
+      // Server actions report redirect() as a rejection, so this stays outside the catch path
+      startTransition(() => updateEventPictureAction(event.id, publicUrl))
+    } catch (e) {
+      console.error(e)
+      toast.error('Error al subir la imagen', { position: 'top-center' })
+    } finally {
+      setIsUploading(false)
+    }
+  }, [event.id])
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
+    onDropRejected: () => {
+      toast.error('Usá una imagen JPG, PNG, WEBP o HEIC de hasta 10 MB', { position: 'top-center' })
+    },
     noDrag: true,
-    accept: { 'image/*': [] }
+    accept: acceptedImageTypes,
+    maxSize: MAX_IMAGE_SIZE
   })
 
   const handleDelete = () => {
-    setIsSaving(true)
-    deletePhotoSubmit()
-      .then(() => setIsSaving(false))
+    startTransition(() => deletePictureAction(event.id))
   }
 
   return (
