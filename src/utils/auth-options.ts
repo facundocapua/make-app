@@ -60,3 +60,18 @@ export const authOptions:NextAuthOptions = {
     }
   }
 }
+
+// For the /api/auth routes, whose session response reaches the browser, which never needs the Google token.
+// Server code keeps using authOptions, and its getServerSession never sends the session to the client.
+export const browserAuthOptions: NextAuthOptions = {
+  ...authOptions,
+  callbacks: {
+    ...authOptions.callbacks,
+    async session ({ session, token }: SessionCallbackProps) {
+      session.user = token.user
+      session.error = token.error
+
+      return session
+    }
+  }
+}

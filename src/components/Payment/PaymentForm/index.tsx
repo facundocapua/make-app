@@ -1,3 +1,5 @@
+'use client'
+
 import { Select, Text, DateField } from '@/components/Form/Elements'
 import type { AlertsContextType } from '@/context/alerts'
 import { AlertsContext } from '@/context/alerts'

@@ -1,5 +1,13 @@
-import PaymentClient from './client'
+import { getServerSession } from 'next-auth'
+import { redirect } from 'next/navigation'
+import PaymentForm from '@/components/Payment/PaymentForm'
+import { authOptions } from '@/utils/auth-options'
 
-export default function PaymentPage () {
-  return (<PaymentClient />)
+export default async function PaymentPage () {
+  const session = await getServerSession(authOptions)
+  if (!session) {
+    redirect('/api/auth/signin')
+  }
+
+  return (<PaymentForm />)
 }

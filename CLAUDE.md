@@ -36,8 +36,8 @@ CI ([.github/workflows/ci.yml](.github/workflows/ci.yml)) runs all of these plus
 
 ### Auth and Google APIs
 
-- NextAuth with the Google provider, configured in [src/utils/auth-options.ts](src/utils/auth-options.ts); scopes are in [src/services/google/auth.ts](src/services/google/auth.ts). Every Google call runs on behalf of the signed-in user with `session.accessToken`; there is no service account.
-- There is no middleware. Each page or route checks the session itself and redirects to `/api/auth/signin` or returns 401, so new pages and routes must do the same. The `signIn` callback only lets accounts in `ALLOWED_EMAILS` sign in; it doesn't end existing sessions, so removing an account also requires rotating `NEXTAUTH_SECRET`.
+- NextAuth with the Google provider, configured in [src/utils/auth-options.ts](src/utils/auth-options.ts); scopes are in [src/services/google/auth.ts](src/services/google/auth.ts). Every Google call runs on behalf of the signed-in user with `session.accessToken`; there is no service account. Only server code gets that token: the `/api/auth` routes use `browserAuthOptions`, which leaves it out of the session sent to the browser, so Google calls can't move to client components.
+- There is no middleware. Each page or route checks the session on the server and redirects to `/api/auth/signin` or returns 401, so new pages and routes must do the same. The `signIn` callback only lets accounts in `ALLOWED_EMAILS` sign in; it doesn't end existing sessions, so removing an account also requires rotating `NEXTAUTH_SECRET`.
 - On token expiry the `jwt` callback calls `refreshAccessToken`. On `RefreshAccessTokenError`, [UserContextProvider](src/context/user.tsx) calls `signOut()`. Sign-in requests offline access with `prompt: 'consent'` so Google issues a refresh token; sessions without one are signed out when the access token expires.
 - Google REST calls go through `makeApiCall` in [src/services/google.ts](src/services/google.ts), which picks the `calendar` or `sheets` base URL from its `service` param and throws `GoogleApiError` on any non-2xx response. Extend it rather than hand-rolling fetches. Server pages pass errors to `handlePageError` ([src/utils/page-errors.ts](src/utils/page-errors.ts)), which redirects on 401, shows the 404 page on 404/410, and otherwise lets [error.tsx](src/app/error.tsx) handle them.
 
@@ -47,14 +47,14 @@ The appointment record is JSON-serialized into the **`description`** field of a 
 
 When changing event code:
 - A new [`EventType`](src/types/event.d.ts) field needs no schema change, but older events won't have it, so reads must tolerate its absence.
-- `createEventAction` builds its record field by field from `FormData` and doesn't set `includesTest` or `testDate`, and `parseEventBody` in [event-validation.ts](src/utils/event-validation.ts) keeps only known fields, so a new field must be added to both explicitly.
+- `createEventAction` builds its record field by field from `FormData` and doesn't set `includesTest` or `testDate`, so a new field must be added there explicitly.
 - `updateEventAction(eventId, changes)` re-reads the event on the server and applies only `EDITABLE_EVENT_FIELDS`, validating just the fields that change, because events added by hand may not pass a full validation. A new editable field must be added to that list and to `getEventChangesError`.
 - `listEvents` follows `nextPageToken` and limits the response with `fields`, so a new Calendar field must also be added to that list.
 - `getCalendar` finds or creates the calendar named by `CALENDAR_NAME` (`'MakeApp Calendar'`) and is called from nearly every server entrypoint to resolve the `calendarId`. It caches the result for 10 minutes per access token, in each server instance's memory, so it is server-only (it imports `node:crypto`). A calendar deleted by hand can keep failing until that cache expires.
 
 ### Income ledger (Google Sheets)
 
-`POST /api/payments` ([route](src/app/api/payments/route.ts)) appends a row to `${GOOGLE_SHEET_NAME}!A2:E`. **`getPaymentRow` in [utils/payments.ts](src/utils/payments.ts) defines the sheet column order**: date, paymentMethod, description, service, amount, plus an empty `clientId` as a sixth value. Reordering it corrupts the ledger.
+`POST /api/payments` ([route](src/app/api/payments/route.ts)) appends a row to `${GOOGLE_SHEET_NAME}!A2:E`. **`getPaymentRow` in [utils/payments.ts](src/utils/payments.ts) defines the sheet column order**: date, paymentMethod, description, service, amount, plus an empty `clientId` as a sixth value. Reordering it corrupts the ledger. The row is sent as `USER_ENTERED` so dates and amounts keep their types, which means free text must go through `asPlainText` or Sheets runs it as a formula.
 
 ### Timezone
 
@@ -75,8 +75,11 @@ Mutations use **server actions** ([event-modal/actions.ts](src/components/Events
 ### Code with no callers in `src`
 
 Check before extending these; the live path is usually the server action above:
-- Routes `POST /api/events`, `PUT|DELETE /api/events/[id]`, `GET /api/events/export` (could still be called from outside the app)
 - The `zustand` dependency is not imported
+
+## Security headers
+
+[next.config.js](next.config.js) sets them for every route. Only `frame-ancestors`, `base-uri`, and `object-src` are enforced; the full CSP is in `Content-Security-Policy-Report-Only`. A new external origin must be added to that policy, which still needs to be promoted to enforced once it runs clean in production.
 
 ## Conventions
 
