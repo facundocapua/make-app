@@ -13,7 +13,7 @@ export default function DateField ({ date, onChange }: Props) {
   const [onlyDate, setOnlyDate] = useState(formatDateComputer(date))
   const [onlyTime, setOnlyTime] = useState(formatTime(date))
 
-  const { editing, setNewValue, handleShowInput, handleConfirm } = useEditInline({ value: formatDateComputer(date), onChange })
+  const { editing, setNewValue, handleShowInput, handleConfirm } = useEditInline({ value: date, onChange })
 
   useEffect(() => {
     try {

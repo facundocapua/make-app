@@ -1,5 +1,6 @@
 import { ReviewIcon } from '@/components/Icons'
 import type { EventType } from '@/types/event'
+import { shareContent } from './share-utils'
 
 type Props = {
   event: EventType
@@ -35,13 +36,7 @@ Fer Gutierrez Makeup
 https://g.page/r/CVc4A9CcScYMEBM/review
 `
     }
-    if (navigator.canShare && navigator.canShare(shareData)) {
-      try {
-        await navigator.share(shareData)
-      } catch (err) {
-        console.log(err)
-      }
-    }
+    await shareContent(shareData)
   }
 
   return (

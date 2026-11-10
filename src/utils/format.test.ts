@@ -35,6 +35,14 @@ describe('formatTime', () => {
     expect(formatTime('2026-05-01T13:55:00.000Z')).toBe('11:00')
   })
 
+  it('does not round across midnight', () => {
+    // 23:55 in Argentina. Forms keep the day of the date, so 00:00 would move the event almost a day back
+    expect(formatTime('2026-05-02T02:55:00.000Z')).toBe('23:45')
+    expect(formatTime('2026-05-02T02:53:00.000Z')).toBe('23:45')
+    expect(formatTime('2026-05-02T02:52:00.000Z')).toBe('23:45')
+    expect(formatTime('2026-05-02T02:55:00.000Z', false)).toBe('23:55')
+  })
+
   it('always returns a value the time select can show', () => {
     // Midnight must be 00:00: some engines format it as 24:00 with hour12: false
     expect(formatTime('2026-05-01T03:00:00.000Z')).toBe('00:00')
