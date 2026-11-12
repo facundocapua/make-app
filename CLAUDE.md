@@ -49,6 +49,7 @@ When changing event code:
 - A new [`EventType`](src/types/event.d.ts) field needs no schema change, but older events won't have it, so reads must tolerate its absence.
 - `createEventAction` builds its record field by field from `FormData` and doesn't set `includesTest` or `testDate`, so a new field must be added there explicitly.
 - `updateEventAction(eventId, changes)` re-reads the event on the server and applies only `EDITABLE_EVENT_FIELDS`, validating just the fields that change, because events added by hand may not pass a full validation. A new editable field must be added to that list and to `getEventChangesError`.
+- The archive loads one year at a time as the user scrolls (`loadArchiveYearAction`), using `hasEventsBefore` to know when to stop, so it reaches events of any age.
 - `listEvents` follows `nextPageToken` and limits the response with `fields`, so a new Calendar field must also be added to that list.
 - `getCalendar` finds or creates the calendar named by `CALENDAR_NAME` (`'MakeApp Calendar'`) and is called from nearly every server entrypoint to resolve the `calendarId`. It caches the result for 10 minutes per access token, in each server instance's memory, so it is server-only (it imports `node:crypto`). A calendar deleted by hand can keep failing until that cache expires.
 

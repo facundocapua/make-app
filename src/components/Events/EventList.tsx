@@ -30,9 +30,11 @@ const trailingActions = ({ event, onItemDelete }: {event: EventType, onItemDelet
 
 type Props = {
   events: Array<EventType>
+  // Lets a list that keeps its own events remove one, instead of reloading the page
+  onDelete?: (event: EventType) => void
 }
 
-export default function EventList ({ events }: Props) {
+export default function EventList ({ events, onDelete }: Props) {
   const router = useRouter()
   const handleItemClick = (event: EventType) => {
     router.push(`/event/${event.id}`)
@@ -48,7 +50,11 @@ export default function EventList ({ events }: Props) {
     }
 
     toast.success('Turno eliminado', { position: 'top-center' })
-    router.refresh()
+    if (onDelete) {
+      onDelete(event)
+    } else {
+      router.refresh()
+    }
   }
 
   if (!events || !events.length) {

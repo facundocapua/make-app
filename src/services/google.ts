@@ -157,3 +157,19 @@ export const listEvents = async ({ calendarId, accessToken, since, to }: GetEven
 
   return events
 }
+
+// One cheap request that tells whether the calendar has anything that starts before a date
+export const hasEventsBefore = async ({ calendarId, accessToken, before }: { calendarId: string, accessToken: string, before: Date }) => {
+  const query = new URLSearchParams({
+    singleEvents: 'true',
+    maxResults: '1',
+    timeMax: before.toISOString(),
+    fields: 'items(id)'
+  })
+  const response = await makeApiCall({
+    url: `/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events?${query}`,
+    accessToken
+  })
+  const page: EventsPage = await response.json()
+  return Boolean(page.items?.length)
+}

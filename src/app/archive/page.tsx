@@ -2,36 +2,24 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/utils/auth-options'
 import type { UserSession } from '@/types/session'
 import { redirect } from 'next/navigation'
-import type { GetEventsProps } from '@/services/google'
-import { CALENDAR_NAME, getCalendar, listEvents } from '@/services/google'
-import { startOfZonedDay } from '@/utils/datetime'
-import { groupByDate } from '@/utils/events'
-import EventsGroupList from '@/components/Events/events-group-list'
+import { CALENDAR_NAME, getCalendar } from '@/services/google'
+import { getFirstArchiveYear } from '@/utils/archive'
 import { handlePageError } from '@/utils/page-errors'
+import { getArchiveYear } from './get-archive-year'
+import ArchiveList from './client'
 
 export default async function ArchivePage () {
   const session = await getServerSession(authOptions) as UserSession
   if (!session) {
     redirect('/api/auth/signin')
   }
-  const { accessToken } = session
+  const accessToken = String(session.accessToken)
 
   try {
-    const { id: calendarId } = await getCalendar({ name: CALENDAR_NAME, accessToken: String(accessToken) })
+    const { id: calendarId } = await getCalendar({ name: CALENDAR_NAME, accessToken })
+    const { events, nextBefore } = await getArchiveYear({ calendarId, accessToken, ...getFirstArchiveYear(new Date()) })
 
-    const params: GetEventsProps = { calendarId, accessToken: String(accessToken) }
-
-    const today = new Date()
-    const since = startOfZonedDay(today)
-    since.setUTCFullYear(since.getUTCFullYear() - 1)
-    params.since = since
-    params.to = today
-
-    const events = await listEvents(params)
-    events.reverse()
-    const groupedEvents = groupByDate(events)
-
-    return (<EventsGroupList data={groupedEvents} />)
+    return (<ArchiveList initialEvents={events} initialNextBefore={nextBefore} />)
   } catch (error) {
     handlePageError(error)
   }
