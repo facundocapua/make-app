@@ -22,7 +22,7 @@ pnpm exec vitest run src/utils/format.test.ts   # a single test file
 pnpm exec tsc --noEmit   # typecheck
 ```
 
-CI ([.github/workflows/ci.yml](.github/workflows/ci.yml)) runs all of these plus the build, on pull requests and pushes to `main`. Component tests use Testing Library and start with a `// @vitest-environment jsdom` comment, since the default environment is node; mock server actions with `vi.mock`, and build events with `makeEvent` from [src/test/event.ts](src/test/event.ts). It runs the tests under two timezones, so date tests must not depend on the machine's timezone. Actions are pinned by commit SHA, and dependencies are installed with `--ignore-scripts`.
+CI ([.github/workflows/ci.yml](.github/workflows/ci.yml)) runs all of these plus the build, on pull requests and pushes to `main`. Component tests use Testing Library and start with a `// @vitest-environment jsdom` comment, since the default environment is node; mock server actions with `vi.mock`, and build events with `makeEvent` from [src/test/event.ts](src/test/event.ts). CI runs the tests under two timezones, so date tests must not depend on the machine's timezone. Actions are pinned by commit SHA, and dependencies are installed with `--ignore-scripts`.
 
 ## Environment variables (`.env.local`)
 
