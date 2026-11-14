@@ -8,7 +8,8 @@ export default defineConfig({
     }
   },
   test: {
-    include: ['src/**/*.test.ts'],
+    // Component tests (*.test.tsx) opt into jsdom with a @vitest-environment comment
+    include: ['src/**/*.test.{ts,tsx}'],
     environment: 'node',
     unstubGlobals: true,
     restoreMocks: true
