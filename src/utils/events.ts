@@ -27,7 +27,7 @@ export const groupByDate = (events: Array<EventType>): Array<GroupedEventItemTyp
 }
 
 export const EVENT_STATUS = {
-  PENDING: 'peding',
+  PENDING: 'pending',
   PROCESSING: 'processing',
   DONE: 'done'
 } as const

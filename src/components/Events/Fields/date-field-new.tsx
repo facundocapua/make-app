@@ -16,13 +16,9 @@ export default function DateField ({ date, onChange }: Props) {
   const { editing, setNewValue, handleShowInput, handleConfirm } = useEditInline({ value: date, onChange })
 
   useEffect(() => {
-    try {
-      const newDate = zonedDateTime(onlyDate, onlyTime)
-      setNewValue(newDate.toISOString())
-    } catch (e) {
-      console.log(`Problem with the date: ${onlyDate}T${onlyTime}`)
-      console.error(e)
-    }
+    const newDate = zonedDateTime(onlyDate, onlyTime)
+    // A date input being cleared or typed in gives an invalid date until it is complete
+    if (!Number.isNaN(newDate.getTime())) setNewValue(newDate.toISOString())
   }, [onlyDate, onlyTime])
 
   if (!editing) {

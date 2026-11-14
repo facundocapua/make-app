@@ -20,13 +20,9 @@ export default function useDateTimeField ({ value, onChange }: Props): Return {
   const [onlyTime, setOnlyTime] = useState(formatTime(value))
 
   useEffect(() => {
-    try {
-      const newDate = zonedDateTime(onlyDate, onlyTime)
-      onChange(newDate.toISOString())
-    } catch (e) {
-      console.log(`Problem with the date: ${onlyDate}T${onlyTime}`)
-      console.error(e)
-    }
+    const newDate = zonedDateTime(onlyDate, onlyTime)
+    // A date input being cleared or typed in gives an invalid date until it is complete
+    if (!Number.isNaN(newDate.getTime())) onChange(newDate.toISOString())
   }, [onlyDate, onlyTime])
 
   return { onlyDate, onlyTime, setOnlyDate, setOnlyTime }

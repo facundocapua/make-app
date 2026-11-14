@@ -72,11 +72,6 @@ App Router under [src/app/](src/app/). `page.tsx` is usually a server component 
 
 Mutations use **server actions** ([event-modal/actions.ts](src/components/Events/event-modal/actions.ts), [CreateEventForm/actions.ts](src/components/Form/CreateEventForm/actions.ts)), which `redirect()` after saving, except `deleteItem`, which returns `{ ok }` so the list can stay on the current page. Flash messages cross the redirect through a short-lived `notification` cookie set by `setNotification` ([toaster.tsx](src/components/toaster/toaster.tsx)) and rendered with `sonner`. The payment form is the exception: it uses `fetch` to `/api/payments` and the alerts context.
 
-### Code with no callers in `src`
-
-Check before extending these; the live path is usually the server action above:
-- The `zustand` dependency is not imported
-
 ## Security headers
 
 [next.config.js](next.config.js) sets them for every route. Only `frame-ancestors`, `base-uri`, and `object-src` are enforced; the full CSP is in `Content-Security-Policy-Report-Only`. A new external origin must be added to that policy, which still needs to be promoted to enforced once it runs clean in production.
