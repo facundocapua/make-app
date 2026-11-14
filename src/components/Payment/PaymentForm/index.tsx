@@ -1,19 +1,16 @@
 'use client'
 
 import { Select, Text, DateField } from '@/components/Form/Elements'
-import type { AlertsContextType } from '@/context/alerts'
-import { AlertsContext } from '@/context/alerts'
-import { savePayment } from '@/services/api/savePayment'
-import { AlertType } from '@/types/alerts'
 import type { PaymentType } from '@/types/payment'
 import { PAYMENT_METHODS, SERVICES } from '@/types/payment'
 import type { FormEvent } from 'react'
-import { useContext, useState } from 'react'
+import { useTransition } from 'react'
+import { toast } from 'sonner'
 import useForm from './hook'
+import { savePaymentAction } from './actions'
 
 export default function PaymentForm () {
-  const { addAlert } = useContext(AlertsContext) as AlertsContextType
-  const [isSaving, setIsSaving] = useState(false)
+  const [isSaving, startTransition] = useTransition()
 
   const {
     updateDate,
@@ -32,19 +29,22 @@ export default function PaymentForm () {
     if (isSaving) return
 
     if (!(amount > 0)) {
-      addAlert({ type: AlertType.ERROR, message: 'Ingresá un monto mayor a cero' })
+      toast.error('Ingresá un monto mayor a cero', { position: 'top-center' })
       return
     }
 
-    setIsSaving(true)
-    savePayment(state)
-      .then(() => {
-        addAlert({ type: AlertType.SUCCESS, message: 'Pago guardado con éxito' })
+    // A transition, because the action redirects to sign-in when the session expired
+    startTransition(async () => {
+      const result = await savePaymentAction(state).catch(() => null)
+      if (!result) {
+        toast.error('No se pudo guardar el pago. Intentá de nuevo.', { position: 'top-center' })
+      } else if (!result.ok) {
+        toast.error(result.error, { position: 'top-center' })
+      } else {
+        toast.success('Pago guardado con éxito', { position: 'top-center' })
         reset()
-      }).catch(err => {
-        console.error(err)
-        addAlert({ type: AlertType.ERROR, message: 'Error al guardar el pago' })
-      }).finally(() => setIsSaving(false))
+      }
+    })
   }
 
   return (

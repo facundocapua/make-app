@@ -3,7 +3,6 @@
 import type { ReactNode } from 'react'
 import { useEffect } from 'react'
 import MainMenu from '@/components/Menu/MainMenu'
-import AlertContainer from '@/components/Ui/AlertContainer'
 import Image from 'next/image'
 
 type MainProps = {
@@ -19,7 +18,6 @@ export default function Main ({ children }: MainProps) {
   return (
     <div className='grid content-center justify-center w-full bg-gray-300'>
       <div className='relative flex flex-col w-screen h-screen max-w-md bg-black'>
-        <AlertContainer />
         <header className='flex items-center justify-center w-full py-4'>
           <h1 className='text-2xl'>
             <Image src='/logo.png' alt='MakeApp' width={150} height={50} />
