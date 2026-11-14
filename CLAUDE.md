@@ -55,7 +55,7 @@ When changing event code:
 
 ### Income ledger (Google Sheets)
 
-`POST /api/payments` ([route](src/app/api/payments/route.ts)) appends a row to `${GOOGLE_SHEET_NAME}!A2:E`. **`getPaymentRow` in [utils/payments.ts](src/utils/payments.ts) defines the sheet column order**: date, paymentMethod, description, service, amount, plus an empty `clientId` as a sixth value. Reordering it corrupts the ledger. The row is sent as `USER_ENTERED` so dates and amounts keep their types, which means free text must go through `asPlainText` or Sheets runs it as a formula.
+`savePaymentAction` ([PaymentForm/actions.ts](src/components/Payment/PaymentForm/actions.ts)) appends a row to `${GOOGLE_SHEET_NAME}!A2:E`. **`getPaymentRow` in [utils/payments.ts](src/utils/payments.ts) defines the sheet column order**: date, paymentMethod, description, service, amount, plus an empty `clientId` as a sixth value. Reordering it corrupts the ledger. The row is sent as `USER_ENTERED` so dates and amounts keep their types, which means free text must go through `asPlainText` or Sheets runs it as a formula.
 
 ### Timezone
 
@@ -71,7 +71,7 @@ Things that are easy to break in the signing call: the SDK leaves `content-type`
 
 App Router under [src/app/](src/app/). `page.tsx` is usually a server component that resolves the session and calendar and fetches data, with a sibling `client.tsx` for interactive parts.
 
-Mutations use **server actions** ([event-modal/actions.ts](src/components/Events/event-modal/actions.ts), [CreateEventForm/actions.ts](src/components/Form/CreateEventForm/actions.ts)), which `redirect()` after saving, except `deleteItem`, which returns `{ ok }` so the list can stay on the current page. Flash messages cross the redirect through a short-lived `notification` cookie set by `setNotification` ([toaster.tsx](src/components/toaster/toaster.tsx)) and rendered with `sonner`. The payment form is the exception: it uses `fetch` to `/api/payments` and the alerts context.
+Mutations use **server actions** ([event-modal/actions.ts](src/components/Events/event-modal/actions.ts), [CreateEventForm/actions.ts](src/components/Form/CreateEventForm/actions.ts), [PaymentForm/actions.ts](src/components/Payment/PaymentForm/actions.ts)), which `redirect()` after saving, except `deleteItem` and `savePaymentAction`, which return `{ ok }` so the page can stay where it is. Flash messages cross the redirect through a short-lived `notification` cookie set by `setNotification` ([toaster.tsx](src/components/toaster/toaster.tsx)) and rendered with `sonner`. Client components show their own messages with `toast` from `sonner`.
 
 ## Security headers
 
