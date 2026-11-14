@@ -7,8 +7,9 @@ import { useEffect } from 'react'
 
 type Props = {
   data: Array<{ date: string, events: Array<EventType> }>
+  onDelete?: (event: EventType) => void
 }
-export default function EventsGroupList ({ data }: Props) {
+export default function EventsGroupList ({ data, onDelete }: Props) {
   useEffect(() => {
     // Check if we are in a client-side environment
     if (typeof window !== 'undefined') {
@@ -33,7 +34,7 @@ export default function EventsGroupList ({ data }: Props) {
         return (
           <div key={date} id={`events-${date}`} className='mb-4'>
             <h2 id={formatDateComputer(date)} className={`text-xl font-bold text-gray-100 ${isOld ? 'opacity-60' : ''}`}>{formatDate(date)}</h2>
-            <EventList events={events} />
+            <EventList events={events} onDelete={onDelete} />
           </div>
         )
       })}

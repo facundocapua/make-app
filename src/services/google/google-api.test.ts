@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { GoogleApiError, listEvents, makeApiCall } from '@/services/google'
+import { GoogleApiError, hasEventsBefore, listEvents, makeApiCall } from '@/services/google'
 import { createEvent, deleteEvent, getEvent, updateEvent } from './events'
 import { appendRow } from './sheets'
 import { parseGoogleEvent } from './parse-event'
@@ -38,6 +38,22 @@ describe('listEvents', () => {
   it('handles a calendar without items', async () => {
     mockFetch(() => json({}))
     await expect(listEvents({ calendarId: 'c', accessToken: 't' })).resolves.toEqual([])
+  })
+})
+
+describe('hasEventsBefore', () => {
+  it.each([
+    [[stored(1)], true],
+    [[], false],
+    [undefined, false]
+  ])('asks for a single event before the date (items: %j)', async (items, expected) => {
+    const fetchMock = mockFetch(() => json(items ? { items } : {}))
+
+    await expect(hasEventsBefore({ calendarId: 'c', accessToken: 't', before: new Date('2025-11-12T03:00:00.000Z') })).resolves.toBe(expected)
+
+    const url = new URL(String(fetchMock.mock.calls[0][0]))
+    expect(url.searchParams.get('maxResults')).toBe('1')
+    expect(url.searchParams.get('timeMax')).toBe('2025-11-12T03:00:00.000Z')
   })
 })
 
