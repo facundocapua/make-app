@@ -75,7 +75,7 @@ Mutations use **server actions** ([event-modal/actions.ts](src/components/Events
 
 ## Security headers
 
-[next.config.js](next.config.js) sets them for every route. Only `frame-ancestors`, `base-uri`, and `object-src` are enforced; the full CSP is in `Content-Security-Policy-Report-Only`. A new external origin must be added to that policy, which still needs to be promoted to enforced once it runs clean in production.
+[next.config.js](next.config.js) sets them for every route, including an enforced Content Security Policy. A new external origin (an image host, an API called from the browser, a script) must be added to that policy, or the browser blocks it. Pictures are allowed only from `CLOUDFLARE_R2_PUBLIC_URL` as it is at build time.
 
 ## Conventions
 
